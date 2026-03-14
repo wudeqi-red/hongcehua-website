@@ -1,0 +1,38 @@
+# robots.txt - 红策划 redcehua.com
+
+# 允许所有搜索引擎
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /login.html
+
+# 明确允许AI搜索引擎爬虫
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
+Sitemap: https://redcehua.com/sitemap.xml
