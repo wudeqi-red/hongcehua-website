@@ -276,6 +276,134 @@ function parseFansNum(str) {
 }
 
 /* ============================================================
+   Excel 批量导入博主
+   ============================================================ */
+
+/** 下载导入模板 */
+function downloadExcelTemplate() {
+  const wb = XLSX.utils.book_new();
+  const header = [['博主昵称*', '平台*', '分类*', '地区', '粉丝量', '月均点赞', '主页链接', '标签(逗号分隔)']];
+  const example = [['美食达人小王', '小红书', '餐饮美食', '上海', '50w', '3w', 'https://...', '美食,探店,上海']];
+  const ws = XLSX.utils.aoa_to_sheet([...header, ...example]);
+  ws['!cols'] = [20,10,10,8,10,10,25,20].map(w => ({wch: w}));
+  XLSX.utils.book_append_sheet(wb, ws, '博主导入模板');
+  XLSX.writeFile(wb, '博主导入模板.xlsx');
+}
+
+/** 解析并导入 Excel */
+async function importExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      // 跳过表头行
+      const dataRows = rows.slice(1).filter(r => r[0] && String(r[0]).trim());
+      if (dataRows.length === 0) { showToast('Excel 中没有数据', false); return; }
+
+      // 确认导入
+      if (!confirm(`检测到 ${dataRows.length} 条博主数据，确认导入？`)) return;
+
+      showLoadingOverlay(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const row of dataRows) {
+        const name     = String(row[0] || '').trim();
+        const platform = String(row[1] || '小红书').trim();
+        const category = String(row[2] || '餐饮美食').trim();
+        const region   = String(row[3] || '全国').trim();
+        const fans     = String(row[4] || '0').trim();
+        const likes    = String(row[5] || '0').trim();
+        const link     = String(row[6] || '#').trim();
+        const tagsRaw  = String(row[7] || '').trim();
+        const tags     = tagsRaw ? tagsRaw.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
+
+        if (!name) continue;
+
+        try {
+          const data = {
+            name, platform, category, region, fans, likes, link, tags,
+            fansNum: parseFansNum(fans),
+            status: 'active',
+          };
+          const newId = await dbAdd(BLOGGERS_COL, data);
+          adminBloggers.unshift({ _id: newId, ...data });
+          successCount++;
+        } catch(err) {
+          failCount++;
+          console.warn('导入行失败:', row, err);
+        }
+      }
+
+      showLoadingOverlay(false);
+      renderAdminBloggers();
+      renderDashboard();
+
+      if (failCount === 0) {
+        showToast(`成功导入 ${successCount} 位博主！`);
+      } else {
+        showToast(`导入完成：成功 ${successCount} 条，失败 ${failCount} 条`, false);
+      }
+    } catch(err) {
+      showLoadingOverlay(false);
+      showToast('Excel 解析失败，请使用模板格式', false);
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ============================================================
+   案例图片上传（CloudBase 云存储）
+   ============================================================ */
+let _caseImgFile = null;  // 当前选择的图片文件
+let _caseImgUrl  = '';    // 已上传的图片URL
+
+function previewCaseImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _caseImgFile = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('caseImgPreview').src = e.target.result;
+    document.getElementById('caseImgPreviewWrap').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCaseImg() {
+  _caseImgFile = null;
+  _caseImgUrl  = '';
+  document.getElementById('c_image').value = '';
+  document.getElementById('caseImgPreviewWrap').style.display = 'none';
+  document.getElementById('caseImgPreview').src = '';
+}
+
+async function uploadCaseImg() {
+  if (!_caseImgFile) return _caseImgUrl || '';
+  try {
+    await initCloud();
+    const ext  = _caseImgFile.name.split('.').pop();
+    const path = `cases/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const res  = await _app.uploadFile({ cloudPath: path, filePath: _caseImgFile });
+    // 获取下载URL
+    const urlRes = await _app.getTempFileURL({ fileList: [res.fileID] });
+    return urlRes.fileList[0]?.tempFileURL || '';
+  } catch(e) {
+    console.error('图片上传失败', e);
+    return '';
+  }
+}
+
+/* ============================================================
    案例管理
    ============================================================ */
 function renderAdminCases() {
@@ -325,12 +453,22 @@ function editCase(id) {
   setVal('c_exposure',   c.exposure);
   setVal('c_interaction',c.interaction);
   setVal('c_conversion', c.conversion);
+  // 显示已有封面图
+  _caseImgFile = null;
+  _caseImgUrl  = c.coverUrl || '';
+  if (_caseImgUrl) {
+    document.getElementById('caseImgPreview').src = _caseImgUrl;
+    document.getElementById('caseImgPreviewWrap').style.display = 'block';
+  } else {
+    document.getElementById('caseImgPreviewWrap').style.display = 'none';
+  }
   document.getElementById('caseAdminModal').classList.add('active');
 }
 
 function closeCaseAdminModal() {
   document.getElementById('caseAdminModal').classList.remove('active');
   editingCaseId = null;
+  removeCaseImg();
 }
 
 async function saveCase() {
@@ -348,6 +486,16 @@ async function saveCase() {
   ];
   const emojis = { '餐饮美食':'🍽️','美容美业':'💆','休闲娱乐':'🎪','零售购物':'🛍️','亲子教育':'👶','健康健身':'🏋️' };
 
+  // 上传图片（如果有）
+  const saveBtnEl = document.querySelector('#caseAdminModal .btn-save');
+  if (saveBtnEl) { saveBtnEl.disabled = true; saveBtnEl.textContent = '保存中...'; }
+
+  let coverUrl = _caseImgUrl;
+  if (_caseImgFile) {
+    showToast('图片上传中...', true);
+    coverUrl = await uploadCaseImg();
+  }
+
   const data = {
     title,
     type:        getVal('c_type'),
@@ -356,6 +504,7 @@ async function saveCase() {
     exposure:    getVal('c_exposure') || '—',
     interaction: getVal('c_interaction') || '—',
     conversion:  getVal('c_conversion') || '—',
+    coverUrl:    coverUrl || '',
   };
 
   try {
@@ -378,7 +527,11 @@ async function saveCase() {
     renderDashboard();
     closeCaseAdminModal();
     showToast(editingCaseId ? '案例已更新！' : '案例添加成功！');
-  } catch(e) { showToast('保存失败', false); }
+  } catch(e) {
+    showToast('保存失败', false);
+  } finally {
+    if (saveBtnEl) { saveBtnEl.disabled = false; saveBtnEl.textContent = '保存'; }
+  }
 }
 
 async function deleteCase(id) {
