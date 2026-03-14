@@ -128,10 +128,40 @@
                 </div>
                 <div class="admin-table-card">
                     <div class="table-header">
-                        <h3>博主列表</h3>
-                        <input type="text" id="adminBloggerSearch" placeholder="搜索博主..." 
-                            style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:white;font-size:13px;outline:none;"
-                            oninput="renderAdminBloggers()">
+                        <h3>博主列表 <span id="bloggerCountLabel" style="font-size:13px;color:var(--text-muted);font-weight:400;"></span></h3>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <input type="text" id="adminBloggerSearch" placeholder="搜索博主..."
+                                style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:white;font-size:13px;outline:none;width:150px;"
+                                oninput="renderAdminBloggers()">
+                            <select id="filterPlatform" onchange="renderAdminBloggers()"
+                                style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-sub);font-size:13px;outline:none;">
+                                <option value="">全部平台</option>
+                                <option>小红书</option><option>抖音</option><option>微博</option>
+                                <option>B站</option><option>微信</option><option>视频号</option>
+                            </select>
+                            <select id="filterCategory" onchange="renderAdminBloggers()"
+                                style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-sub);font-size:13px;outline:none;">
+                                <option value="">全部领域</option>
+                                <option>美食探店</option><option>美妆时尚</option><option>旅游出行</option>
+                                <option>亲子母婴</option><option>运动健身</option><option>娱乐生活</option>
+                                <option>数码科技</option><option>家居家装</option>
+                            </select>
+                            <select id="filterRegion" onchange="renderAdminBloggers()"
+                                style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-sub);font-size:13px;outline:none;">
+                                <option value="">全部地区</option>
+                                <option>北京</option><option>上海</option><option>广州</option><option>深圳</option>
+                                <option>成都</option><option>杭州</option><option>武汉</option><option>南京</option>
+                                <option>西安</option><option>重庆</option><option>全国</option>
+                            </select>
+                            <button onclick="resetBloggerFilters()"
+                                style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer;">
+                                重置
+                            </button>
+                            <button onclick="exportBloggersExcel()"
+                                style="background:rgba(46,213,115,0.12);border:1px solid rgba(46,213,115,0.3);color:#2ed573;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;">
+                                <i class="fas fa-file-export"></i> 导出Excel
+                            </button>
+                        </div>
                     </div>
                     <div style="overflow-x:auto;">
                         <table>
@@ -412,6 +442,10 @@
                 <div class="form-field">
                     <label>主页链接</label>
                     <input type="text" id="b_link" placeholder="https://...">
+                </div>
+                <div class="form-field">
+                    <label>微信号 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">（仅后台可见，不对外展示）</span></label>
+                    <input type="text" id="b_wechat" placeholder="请输入微信号">
                 </div>
                 <div class="form-field">
                     <label>标签（用逗号分隔）</label>

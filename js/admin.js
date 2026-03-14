@@ -159,10 +159,19 @@ function renderAdminBloggers() {
   const tbody = document.getElementById('adminBloggerTable');
   if (!tbody) return;
 
-  const kw = (document.getElementById('adminBloggerSearch')?.value || '').trim().toLowerCase();
-  const data = kw
-    ? adminBloggers.filter(b => b.name.toLowerCase().includes(kw) || b.category.includes(kw) || b.region.includes(kw))
-    : adminBloggers;
+  const kw       = (document.getElementById('adminBloggerSearch')?.value || '').trim().toLowerCase();
+  const platform = document.getElementById('filterPlatform')?.value || '';
+  const category = document.getElementById('filterCategory')?.value || '';
+  const region   = document.getElementById('filterRegion')?.value || '';
+
+  let data = adminBloggers;
+  if (kw)       data = data.filter(b => b.name.toLowerCase().includes(kw) || b.category.includes(kw) || b.region.includes(kw));
+  if (platform) data = data.filter(b => b.platform === platform);
+  if (category) data = data.filter(b => b.category === category);
+  if (region)   data = data.filter(b => b.region === region);
+
+  const countEl = document.getElementById('bloggerCountLabel');
+  if (countEl) countEl.textContent = `共 ${data.length} 条`;
 
   if (data.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:32px">暂无数据</td></tr>`;
@@ -191,6 +200,12 @@ function renderAdminBloggers() {
   `).join('');
 }
 
+function resetBloggerFilters() {
+  const ids = ['adminBloggerSearch','filterPlatform','filterCategory','filterRegion'];
+  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  renderAdminBloggers();
+}
+
 function openBloggerModal(id = null) {
   editingBloggerId = id;
   const title = document.getElementById('bloggerModalTitle');
@@ -206,10 +221,11 @@ function openBloggerModal(id = null) {
     setVal('b_fans',     b.fans);
     setVal('b_likes',    b.likes);
     setVal('b_link',     b.link);
+    setVal('b_wechat',   b.wechat || '');
     setVal('b_tags',     b.tags.join(','));
   } else {
     title.textContent = '添加博主';
-    clearVals(['b_name','b_fans','b_likes','b_link','b_tags']);
+    clearVals(['b_name','b_fans','b_likes','b_link','b_wechat','b_tags']);
   }
   document.getElementById('bloggerModal').classList.add('active');
 }
@@ -237,6 +253,7 @@ async function saveBlogger() {
     region:   getVal('b_region'),
     likes:    getVal('b_likes').trim() || '0',
     link:     getVal('b_link').trim() || '#',
+    wechat:   getVal('b_wechat').trim() || '',
   };
 
   try {
@@ -282,10 +299,10 @@ function parseFansNum(str) {
 /** 下载导入模板 */
 function downloadExcelTemplate() {
   const wb = XLSX.utils.book_new();
-  const header = [['博主昵称*', '平台*', '分类*', '地区', '粉丝量', '月均点赞', '主页链接', '标签(逗号分隔)']];
-  const example = [['美食达人小王', '小红书', '餐饮美食', '上海', '50w', '3w', 'https://...', '美食,探店,上海']];
+  const header = [['博主昵称*', '平台*', '分类*', '地区', '粉丝量', '月均点赞', '主页链接', '微信号', '标签(逗号分隔)']];
+  const example = [['美食达人小王', '小红书', '餐饮美食', '上海', '50w', '3w', 'https://...', 'wechat_id_123', '美食,探店,上海']];
   const ws = XLSX.utils.aoa_to_sheet([...header, ...example]);
-  ws['!cols'] = [20,10,10,8,10,10,25,20].map(w => ({wch: w}));
+  ws['!cols'] = [20,10,10,8,10,10,25,18,20].map(w => ({wch: w}));
   XLSX.utils.book_append_sheet(wb, ws, '博主导入模板');
   XLSX.writeFile(wb, '博主导入模板.xlsx');
 }
@@ -303,11 +320,9 @@ async function importExcel(input) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
 
-      // 跳过表头行
       const dataRows = rows.slice(1).filter(r => r[0] && String(r[0]).trim());
       if (dataRows.length === 0) { showToast('Excel 中没有数据', false); return; }
 
-      // 确认导入
       if (!confirm(`检测到 ${dataRows.length} 条博主数据，确认导入？`)) return;
 
       showLoadingOverlay(true);
@@ -322,14 +337,15 @@ async function importExcel(input) {
         const fans     = String(row[4] || '0').trim();
         const likes    = String(row[5] || '0').trim();
         const link     = String(row[6] || '#').trim();
-        const tagsRaw  = String(row[7] || '').trim();
+        const wechat   = String(row[7] || '').trim();
+        const tagsRaw  = String(row[8] || '').trim();
         const tags     = tagsRaw ? tagsRaw.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
 
         if (!name) continue;
 
         try {
           const data = {
-            name, platform, category, region, fans, likes, link, tags,
+            name, platform, category, region, fans, likes, link, wechat, tags,
             fansNum: parseFansNum(fans),
             status: 'active',
           };
@@ -358,6 +374,41 @@ async function importExcel(input) {
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+/** 导出博主数据为 Excel（含微信号，仅后台） */
+function exportBloggersExcel() {
+  // 按当前筛选结果导出
+  const kw       = (document.getElementById('adminBloggerSearch')?.value || '').trim().toLowerCase();
+  const platform = document.getElementById('filterPlatform')?.value || '';
+  const category = document.getElementById('filterCategory')?.value || '';
+  const region   = document.getElementById('filterRegion')?.value || '';
+
+  let data = adminBloggers;
+  if (kw)       data = data.filter(b => b.name.toLowerCase().includes(kw) || b.category.includes(kw) || b.region.includes(kw));
+  if (platform) data = data.filter(b => b.platform === platform);
+  if (category) data = data.filter(b => b.category === category);
+  if (region)   data = data.filter(b => b.region === region);
+
+  if (data.length === 0) { showToast('没有可导出的数据', false); return; }
+
+  const header = [['博主昵称', '平台', '领域', '地区', '粉丝量', '赞藏量', '主页链接', '微信号', '标签', '状态']];
+  const rows = data.map(b => [
+    b.name, b.platform, b.category, b.region,
+    b.fans, b.likes, b.link || '',
+    b.wechat || '',
+    (b.tags || []).join(','),
+    b.status === 'active' ? '合作中' : '待确认',
+  ]);
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([...header, ...rows]);
+  ws['!cols'] = [20,10,10,8,10,10,30,18,20,8].map(w => ({wch: w}));
+  XLSX.utils.book_append_sheet(wb, ws, '博主数据');
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  XLSX.writeFile(wb, `博主数据_${dateStr}.xlsx`);
+  showToast(`已导出 ${data.length} 条博主数据`);
 }
 
 /* ============================================================
