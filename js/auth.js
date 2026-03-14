@@ -1,60 +1,32 @@
 /* ============================================================
-   auth.js - 登录认证逻辑
+   auth.js - 登录状态管理（基于 CloudBase）
    ============================================================ */
 
-// 默认账号密码（首次使用，登录后可在后台修改）
-const DEFAULT_ADMIN = { user: 'admin', pass: 'hongcehua2024' };
-
-function getAdminCredentials() {
-  try {
-    const raw = localStorage.getItem('hc_admin_credentials');
-    return raw ? JSON.parse(raw) : DEFAULT_ADMIN;
-  } catch { return DEFAULT_ADMIN; }
-}
-
-function saveAdminCredentials(user, pass) {
-  localStorage.setItem('hc_admin_credentials', JSON.stringify({ user, pass }));
-}
-
-/* ---------- 登录页逻辑 ---------- */
-function doLogin() {
-  const inputUser = document.getElementById('loginUser')?.value.trim();
-  const inputPass = document.getElementById('loginPass')?.value;
-  const errEl = document.getElementById('loginError');
-
-  const cred = getAdminCredentials();
-
-  if (inputUser === cred.user && inputPass === cred.pass) {
-    // 写入登录态（sessionStorage，关闭浏览器后自动失效）
-    sessionStorage.setItem('hc_admin_logged', '1');
-    window.location.href = 'admin.html';
-  } else {
-    errEl && errEl.classList.add('show');
-    document.getElementById('loginPass').value = '';
-    setTimeout(() => errEl && errEl.classList.remove('show'), 3000);
-  }
-}
-
-function togglePass(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁';
-  }
-}
-
-/* ---------- 后台页鉴权（在 admin.js 之前执行） ---------- */
+/* ---------- 鉴权：未登录跳转登录页 ---------- */
 function requireLogin() {
-  if (!sessionStorage.getItem('hc_admin_logged')) {
+  const sess = sessionStorage.getItem('hc_logged_user');
+  if (!sess) {
     window.location.href = 'login.html';
+    return null;
+  }
+  try {
+    return JSON.parse(sess);
+  } catch {
+    window.location.href = 'login.html';
+    return null;
   }
 }
 
+/* ---------- 获取当前登录用户 ---------- */
+function getCurrentUser() {
+  try {
+    const sess = sessionStorage.getItem('hc_logged_user');
+    return sess ? JSON.parse(sess) : null;
+  } catch { return null; }
+}
+
+/* ---------- 退出登录 ---------- */
 function adminLogout() {
-  sessionStorage.removeItem('hc_admin_logged');
+  sessionStorage.removeItem('hc_logged_user');
   window.location.href = 'login.html';
 }

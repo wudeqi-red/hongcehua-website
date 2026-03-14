@@ -18,7 +18,10 @@
                 <a href="index.html" style="color:var(--text-sub); text-decoration:none; font-size:14px;">← 返回前台</a>
                 <button onclick="showSection('settings')" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text-sub);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;">⚙️ 账号设置</button>
                 <button onclick="adminLogout()" style="background:rgba(255,71,87,0.12);border:1px solid rgba(255,71,87,0.2);color:var(--primary);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;">退出登录</button>
-                <div style="width:36px; height:36px; background:linear-gradient(135deg,#ff4757,#ff6b81); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;">管</div>
+                <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;padding:4px 12px 4px 4px;">
+                    <div style="width:28px;height:28px;background:linear-gradient(135deg,#ff4757,#ff6b81);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">管</div>
+                    <span id="navUserName" style="font-size:13px;color:var(--text-sub);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">管理员</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -48,6 +51,9 @@
                 <div class="sidebar-section-title">其他</div>
                 <a class="sidebar-item" onclick="showSection('inquiries')">
                     <i class="fas fa-envelope"></i> 询盘记录
+                </a>
+                <a class="sidebar-item" id="sidebar-accounts" onclick="showSection('accounts')">
+                    <i class="fas fa-user-cog"></i> 子账号管理
                 </a>
                 <a class="sidebar-item" onclick="showSection('settings')">
                     <i class="fas fa-cog"></i> 账号设置
@@ -217,6 +223,71 @@
                             </thead>
                             <tbody id="adminInquiryTable"></tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 子账号管理 -->
+            <div id="section-accounts" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>子账号管理</h1>
+                    <button class="btn-add" onclick="openAccountModal()">+ 新建账号</button>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header"><h3>账号列表</h3><span id="accountCount" style="font-size:13px;color:var(--text-muted)"></span></div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>账号名</th>
+                                    <th>角色</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新建/编辑账号弹窗 -->
+            <div class="modal-overlay" id="accountModal">
+                <div class="modal-box" style="max-width:420px;">
+                    <div class="modal-header">
+                        <h3 id="accountModalTitle">新建账号</h3>
+                        <button class="modal-close" onclick="closeAccountModal()">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label>账号名 <span style="color:var(--primary)">*</span></label>
+                                <input type="text" id="acc_username" placeholder="请输入账号名">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label>密码 <span style="color:var(--primary)">*</span></label>
+                                <div style="position:relative;">
+                                    <input type="password" id="acc_password" placeholder="请输入密码（至少6位）" style="padding-right:40px;">
+                                    <button class="eye-btn" onclick="togglePassAdmin('acc_password',this)" tabindex="-1">👁</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label>角色</label>
+                                <select id="acc_role">
+                                    <option value="sub">普通管理员</option>
+                                    <option value="admin">超级管理员</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="accError" style="background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.3);color:#ff6b81;border-radius:8px;padding:10px 14px;font-size:13px;display:none;margin-top:4px;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeAccountModal()">取消</button>
+                        <button class="btn-save" onclick="saveAccount()">保存</button>
                     </div>
                 </div>
             </div>
@@ -463,9 +534,12 @@
         <span>✅</span> <span id="toastMsg">保存成功！</span>
     </div>
 
+    <!-- CloudBase SDK -->
+    <script src="https://res.wx.qq.com/open/js/cloudbase/1.3.5/cloud.js"></script>
+    <script src="js/cloud.js"></script>
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
-    <script>requireLogin();</script>
+    <script>const _currentUser = requireLogin();</script>
     <script src="js/admin.js"></script>
 </body>
 </html>
