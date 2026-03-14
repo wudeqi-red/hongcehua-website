@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营销案例 - 红策划</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="location.href='index.html'">
+                <span class="logo-icon">🔴</span>
+                <span class="logo-text">红<span class="logo-sub">策划</span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="bloggers.html">博主库</a></li>
+                <li><a href="cases.html" class="active">营销案例</a></li>
+                <li><a href="suppliers.html">供应商资源</a></li>
+                <li><a href="admin.html" class="nav-admin">后台管理</a></li>
+            </ul>
+            <div class="nav-contact">
+                <a href="index.html#contact" class="btn-contact">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="section-tag">营销案例</div>
+            <h1>用数据说话的<span class="gradient-text">营销实力</span></h1>
+            <p>300+ 成功案例，覆盖餐饮、美业、零售、娱乐等本地生活全业态</p>
+        </div>
+    </section>
+
+    <section style="padding: 40px 0 80px;">
+        <div class="container">
+            <!-- 筛选 -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>搜索案例</label>
+                    <input type="text" id="caseSearch" placeholder="输入品牌或关键词...">
+                </div>
+                <div class="filter-group">
+                    <label>案例类型</label>
+                    <select id="caseTypeFilter">
+                        <option value="">全部类型</option>
+                        <option>品牌策划</option>
+                        <option>探店推广</option>
+                        <option>开业营销</option>
+                        <option>节日活动</option>
+                        <option>达人合作</option>
+                        <option>直播带货</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>行业</label>
+                    <select id="industryFilter">
+                        <option value="">全部行业</option>
+                        <option>餐饮美食</option>
+                        <option>美容美业</option>
+                        <option>休闲娱乐</option>
+                        <option>零售购物</option>
+                        <option>亲子教育</option>
+                        <option>健康健身</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:18px;">
+                    <button class="filter-btn" onclick="applyCaseFilter()">筛选</button>
+                    <button class="filter-btn reset" onclick="resetCaseFilter()">重置</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px; color:var(--text-sub); font-size:14px;">
+                共 <span id="caseCount" style="color:var(--primary); font-weight:700;">12</span> 个案例
+            </div>
+
+            <div class="cases-list" id="casesGrid"></div>
+        </div>
+    </section>
+
+    <!-- 案例详情弹窗 -->
+    <div class="modal-overlay" id="caseModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3 id="modalCaseTitle">案例详情</h3>
+                <button class="modal-close" onclick="closeCaseModal()">✕</button>
+            </div>
+            <div id="modalCaseBody"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 红策划 版权所有 | 本地生活营销专家</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/cases.js"></script>
+</body>
+</html>

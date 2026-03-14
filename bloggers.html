@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博主库 - 红策划</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="location.href='index.html'">
+                <span class="logo-icon">🔴</span>
+                <span class="logo-text">红<span class="logo-sub">策划</span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="bloggers.html" class="active">博主库</a></li>
+                <li><a href="cases.html">营销案例</a></li>
+                <li><a href="suppliers.html">供应商资源</a></li>
+                <li><a href="admin.html" class="nav-admin">后台管理</a></li>
+            </ul>
+            <div class="nav-contact">
+                <a href="index.html#contact" class="btn-contact">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页头 -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="section-tag">博主资源库</div>
+            <h1>找到最适合你品牌的<span class="gradient-text">达人博主</span></h1>
+            <p>500+ 优质博主资源，覆盖多平台多领域，精准匹配，高效合作</p>
+        </div>
+    </section>
+
+    <!-- 主内容 -->
+    <section style="padding: 40px 0 80px;">
+        <div class="container">
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>搜索博主</label>
+                    <input type="text" id="searchInput" placeholder="输入博主名称...">
+                </div>
+                <div class="filter-group">
+                    <label>平台</label>
+                    <select id="platformFilter">
+                        <option value="">全部平台</option>
+                        <option>小红书</option>
+                        <option>抖音</option>
+                        <option>微博</option>
+                        <option>B站</option>
+                        <option>微信</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>领域</label>
+                    <select id="categoryFilter">
+                        <option value="">全部领域</option>
+                        <option>美食探店</option>
+                        <option>美妆时尚</option>
+                        <option>旅游出行</option>
+                        <option>亲子母婴</option>
+                        <option>运动健身</option>
+                        <option>娱乐生活</option>
+                        <option>数码科技</option>
+                        <option>家居家装</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>粉丝量</label>
+                    <select id="fansFilter">
+                        <option value="">全部量级</option>
+                        <option value="nano">1万以下（素人）</option>
+                        <option value="micro">1万~10万（微达人）</option>
+                        <option value="mid">10万~100万（腰部）</option>
+                        <option value="macro">100万以上（头部）</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>地区</label>
+                    <select id="regionFilter">
+                        <option value="">全部地区</option>
+                        <option>北京</option>
+                        <option>上海</option>
+                        <option>广州</option>
+                        <option>深圳</option>
+                        <option>成都</option>
+                        <option>杭州</option>
+                        <option>武汉</option>
+                        <option>南京</option>
+                        <option>西安</option>
+                        <option>重庆</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:18px;">
+                    <button class="filter-btn" onclick="applyFilter()">筛选</button>
+                    <button class="filter-btn reset" onclick="resetFilter()">重置</button>
+                </div>
+            </div>
+
+            <!-- 结果统计 -->
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                <div style="color:var(--text-sub); font-size:14px;">
+                    共找到 <span id="resultCount" style="color:var(--primary); font-weight:700;">24</span> 位博主
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="page-btn active" onclick="setSortOrder('hot')">热门</button>
+                    <button class="page-btn" onclick="setSortOrder('fans')">粉丝量</button>
+                    <button class="page-btn" onclick="setSortOrder('likes')">赞藏量</button>
+                </div>
+            </div>
+
+            <!-- 博主列表 -->
+            <div class="bloggers-grid" id="bloggersGrid"></div>
+
+            <!-- 分页 -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 红策划 版权所有 | 本地生活营销专家</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/bloggers.js"></script>
+</body>
+</html>

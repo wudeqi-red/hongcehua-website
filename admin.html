@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 红策划</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="location.href='index.html'">
+                <span class="logo-icon">🔴</span>
+                <span class="logo-text">红<span class="logo-sub">策划</span> <span style="font-size:13px; color:var(--text-muted); font-weight:400;">后台管理</span></span>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
+                <a href="index.html" style="color:var(--text-sub); text-decoration:none; font-size:14px;">← 返回前台</a>
+                <div style="width:36px; height:36px; background:linear-gradient(135deg,#ff4757,#ff6b81); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;">管</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">数据概览</div>
+                <a class="sidebar-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-chart-pie"></i> 仪表盘
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">内容管理</div>
+                <a class="sidebar-item" onclick="showSection('bloggers')">
+                    <i class="fas fa-users"></i> 博主管理
+                </a>
+                <a class="sidebar-item" onclick="showSection('cases')">
+                    <i class="fas fa-briefcase"></i> 案例管理
+                </a>
+                <a class="sidebar-item" onclick="showSection('suppliers')">
+                    <i class="fas fa-building"></i> 供应商管理
+                </a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">其他</div>
+                <a class="sidebar-item" onclick="showSection('inquiries')">
+                    <i class="fas fa-envelope"></i> 询盘记录
+                </a>
+            </div>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="admin-main">
+            <!-- 仪表盘 -->
+            <div id="section-dashboard" class="admin-section">
+                <div class="admin-header">
+                    <h1>数据概览</h1>
+                    <span style="color:var(--text-muted); font-size:14px;">最近更新：2024-12-01</span>
+                </div>
+                <div class="admin-stats-row">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:rgba(255,71,87,0.15)">👤</div>
+                        <div>
+                            <div class="admin-stat-num" id="stat-bloggers">0</div>
+                            <div class="admin-stat-label">博主总数</div>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:rgba(162,155,254,0.15)">📁</div>
+                        <div>
+                            <div class="admin-stat-num" id="stat-cases">0</div>
+                            <div class="admin-stat-label">案例总数</div>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:rgba(67,233,123,0.15)">🏢</div>
+                        <div>
+                            <div class="admin-stat-num" id="stat-suppliers">0</div>
+                            <div class="admin-stat-label">供应商数</div>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:rgba(255,165,2,0.15)">📩</div>
+                        <div>
+                            <div class="admin-stat-num" id="stat-inquiries">0</div>
+                            <div class="admin-stat-label">待处理询盘</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header">
+                        <h3>博主分类分布</h3>
+                    </div>
+                    <div style="padding:24px;">
+                        <div id="categoryChart" style="display:flex; flex-direction:column; gap:12px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 博主管理 -->
+            <div id="section-bloggers" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>博主管理</h1>
+                    <button class="btn-add" onclick="openBloggerModal()">
+                        <i class="fas fa-plus"></i> 添加博主
+                    </button>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header">
+                        <h3>博主列表</h3>
+                        <input type="text" id="adminBloggerSearch" placeholder="搜索博主..." 
+                            style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:white;font-size:13px;outline:none;"
+                            oninput="renderAdminBloggers()">
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>博主</th>
+                                    <th>平台</th>
+                                    <th>领域</th>
+                                    <th>粉丝量</th>
+                                    <th>赞藏量</th>
+                                    <th>地区</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBloggerTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例管理 -->
+            <div id="section-cases" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>案例管理</h1>
+                    <button class="btn-add" onclick="openCaseModal()">
+                        <i class="fas fa-plus"></i> 添加案例
+                    </button>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header"><h3>案例列表</h3></div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>案例名称</th>
+                                    <th>类型</th>
+                                    <th>行业</th>
+                                    <th>曝光量</th>
+                                    <th>互动量</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCaseTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 供应商管理 -->
+            <div id="section-suppliers" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>供应商管理</h1>
+                    <button class="btn-add" onclick="openSupplierModal()">
+                        <i class="fas fa-plus"></i> 添加供应商
+                    </button>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header"><h3>供应商列表</h3></div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>供应商</th>
+                                    <th>类型</th>
+                                    <th>评分</th>
+                                    <th>合作次数</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSupplierTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 询盘管理 -->
+            <div id="section-inquiries" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>询盘记录</h1>
+                </div>
+                <div class="admin-table-card">
+                    <div class="table-header"><h3>最新询盘</h3></div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>姓名</th>
+                                    <th>电话</th>
+                                    <th>品牌</th>
+                                    <th>服务类型</th>
+                                    <th>状态</th>
+                                    <th>时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminInquiryTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 博主添加/编辑弹窗 -->
+    <div class="modal-overlay" id="bloggerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="bloggerModalTitle">添加博主</h3>
+                <button class="modal-close" onclick="closeBloggerModal()">✕</button>
+            </div>
+            <div class="modal-form" id="bloggerModalForm">
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>博主昵称 *</label>
+                        <input type="text" id="b_name" placeholder="例：美食探店小红">
+                    </div>
+                    <div class="form-field">
+                        <label>平台 *</label>
+                        <select id="b_platform">
+                            <option>小红书</option>
+                            <option>抖音</option>
+                            <option>微博</option>
+                            <option>B站</option>
+                            <option>微信</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>领域 *</label>
+                        <select id="b_category">
+                            <option>美食探店</option>
+                            <option>美妆时尚</option>
+                            <option>旅游出行</option>
+                            <option>亲子母婴</option>
+                            <option>运动健身</option>
+                            <option>娱乐生活</option>
+                            <option>数码科技</option>
+                            <option>家居家装</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>地区</label>
+                        <select id="b_region">
+                            <option>北京</option><option>上海</option><option>广州</option>
+                            <option>深圳</option><option>成都</option><option>杭州</option>
+                            <option>武汉</option><option>南京</option><option>西安</option><option>重庆</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>粉丝量</label>
+                        <input type="text" id="b_fans" placeholder="例：50.2w">
+                    </div>
+                    <div class="form-field">
+                        <label>赞藏量</label>
+                        <input type="text" id="b_likes" placeholder="例：120w">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>主页链接</label>
+                    <input type="text" id="b_link" placeholder="https://...">
+                </div>
+                <div class="form-field">
+                    <label>标签（用逗号分隔）</label>
+                    <input type="text" id="b_tags" placeholder="例：探店,美食,生活">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeBloggerModal()">取消</button>
+                <button class="btn-save" onclick="saveBlogger()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 案例添加弹窗 -->
+    <div class="modal-overlay" id="caseAdminModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>添加案例</h3>
+                <button class="modal-close" onclick="closeCaseAdminModal()">✕</button>
+            </div>
+            <div class="modal-form">
+                <div class="form-field">
+                    <label>案例标题 *</label>
+                    <input type="text" id="c_title" placeholder="例：某连锁火锅开业推广">
+                </div>
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>案例类型</label>
+                        <select id="c_type">
+                            <option>品牌策划</option>
+                            <option>探店推广</option>
+                            <option>开业营销</option>
+                            <option>节日活动</option>
+                            <option>达人合作</option>
+                            <option>直播带货</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>行业</label>
+                        <select id="c_industry">
+                            <option>餐饮美食</option>
+                            <option>美容美业</option>
+                            <option>休闲娱乐</option>
+                            <option>零售购物</option>
+                            <option>亲子教育</option>
+                            <option>健康健身</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>案例简介</label>
+                    <textarea id="c_desc" rows="3" placeholder="简要描述案例背景和执行内容..."></textarea>
+                </div>
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>曝光量</label>
+                        <input type="text" id="c_exposure" placeholder="例：800w+">
+                    </div>
+                    <div class="form-field">
+                        <label>互动量</label>
+                        <input type="text" id="c_interaction" placeholder="例：15w+">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>转化效果</label>
+                    <input type="text" id="c_conversion" placeholder="例：销售额增长200%">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeCaseAdminModal()">取消</button>
+                <button class="btn-save" onclick="saveCase()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 供应商添加弹窗 -->
+    <div class="modal-overlay" id="supplierAdminModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>添加供应商</h3>
+                <button class="modal-close" onclick="closeSupplierAdminModal()">✕</button>
+            </div>
+            <div class="modal-form">
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>供应商名称 *</label>
+                        <input type="text" id="s_name" placeholder="公司名称">
+                    </div>
+                    <div class="form-field">
+                        <label>服务类型</label>
+                        <select id="s_type">
+                            <option>摄影摄像</option>
+                            <option>视觉设计</option>
+                            <option>印刷物料</option>
+                            <option>活动执行</option>
+                            <option>视频制作</option>
+                            <option>数字营销</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>服务描述</label>
+                    <textarea id="s_desc" rows="3" placeholder="简述供应商服务内容..."></textarea>
+                </div>
+                <div class="modal-form-row">
+                    <div class="form-field">
+                        <label>联系人</label>
+                        <input type="text" id="s_contact" placeholder="联系人姓名">
+                    </div>
+                    <div class="form-field">
+                        <label>联系电话</label>
+                        <input type="text" id="s_phone" placeholder="手机号码">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>服务标签（逗号分隔）</label>
+                    <input type="text" id="s_tags" placeholder="例：商业摄影,产品拍摄,快速交付">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeSupplierAdminModal()">取消</button>
+                <button class="btn-save" onclick="saveSupplier()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast">
+        <span>✅</span> <span id="toastMsg">保存成功！</span>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

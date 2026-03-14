@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>供应商资源 - 红策划</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="location.href='index.html'">
+                <span class="logo-icon">🔴</span>
+                <span class="logo-text">红<span class="logo-sub">策划</span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="bloggers.html">博主库</a></li>
+                <li><a href="cases.html">营销案例</a></li>
+                <li><a href="suppliers.html" class="active">供应商资源</a></li>
+                <li><a href="admin.html" class="nav-admin">后台管理</a></li>
+            </ul>
+            <div class="nav-contact">
+                <a href="index.html#contact" class="btn-contact">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <div class="section-tag">供应商资源</div>
+            <h1>精选合作供应商<span class="gradient-text">一站式服务</span></h1>
+            <p>整合50+ 优质供应商资源，摄影、设计、印刷、活动执行全覆盖</p>
+        </div>
+    </section>
+
+    <section style="padding: 40px 0 80px;">
+        <div class="container">
+            <!-- 分类导航 -->
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px;">
+                <button class="page-btn active" onclick="filterSupplier(this,'')">全部</button>
+                <button class="page-btn" onclick="filterSupplier(this,'摄影摄像')">📷 摄影摄像</button>
+                <button class="page-btn" onclick="filterSupplier(this,'视觉设计')">🎨 视觉设计</button>
+                <button class="page-btn" onclick="filterSupplier(this,'印刷物料')">🖨️ 印刷物料</button>
+                <button class="page-btn" onclick="filterSupplier(this,'活动执行')">🎪 活动执行</button>
+                <button class="page-btn" onclick="filterSupplier(this,'视频制作')">🎬 视频制作</button>
+                <button class="page-btn" onclick="filterSupplier(this,'数字营销')">📊 数字营销</button>
+            </div>
+
+            <div class="suppliers-grid" id="suppliersGrid"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 红策划 版权所有 | 本地生活营销专家</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/suppliers.js"></script>
+</body>
+</html>
