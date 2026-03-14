@@ -12,11 +12,13 @@ let _db  = null;
 async function initCloud() {
   if (_app) return _app;
   _app = cloudbase.init({ env: ENV_ID, region: 'ap-shanghai' });
-  // 匿名登录（前台访客读取数据使用）
+  // 匿名登录（新版SDK写法）
   try {
     const auth = _app.auth({ persistence: 'local' });
     const loginState = await auth.getLoginState();
-    if (!loginState) await auth.anonymousAuthProvider().signIn();
+    if (!loginState) {
+      await auth.signInAnonymously();
+    }
   } catch(e) { console.warn('匿名登录失败', e); }
   _db = _app.database();
   return _app;
