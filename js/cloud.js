@@ -11,7 +11,7 @@ let _db  = null;
 /* ---------- 初始化 ---------- */
 async function initCloud() {
   if (_app) return _app;
-  _app = new cloudbase.App({ env: ENV_ID });
+  _app = cloudbase.init({ env: ENV_ID });
   // 匿名登录（前台访客读取数据使用）
   try {
     const auth = _app.auth({ persistence: 'local' });
