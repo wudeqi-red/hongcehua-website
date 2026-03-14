@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台登录 - 红策划</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at 30% 40%, rgba(255,71,87,0.18) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, rgba(162,155,254,0.12) 0%, transparent 50%),
+                        var(--bg);
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo .logo-big {
+            font-size: 36px;
+            font-weight: 900;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .login-logo p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .login-field label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .login-field .input-wrap {
+            position: relative;
+        }
+
+        .login-field input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: white;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-field input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-field input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .eye-btn:hover { color: white; }
+
+        .login-btn {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            margin-top: 4px;
+            box-shadow: 0 8px 30px rgba(255,71,87,0.35);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255,71,87,0.5);
+        }
+
+        .login-error {
+            background: rgba(255,71,87,0.1);
+            border: 1px solid rgba(255,71,87,0.3);
+            color: #ff6b81;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+        }
+
+        .login-error.show { display: block; }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link a:hover { color: white; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="login-logo">
+            <span class="logo-big">🔴 红<span style="color:var(--primary)">策划</span></span>
+            <p>后台管理系统 · 请登录</p>
+        </div>
+
+        <div class="login-form">
+            <div class="login-field">
+                <label>账号</label>
+                <div class="input-wrap">
+                    <input type="text" id="loginUser" placeholder="请输入账号" autocomplete="username">
+                </div>
+            </div>
+            <div class="login-field">
+                <label>密码</label>
+                <div class="input-wrap">
+                    <input type="password" id="loginPass" placeholder="请输入密码" autocomplete="current-password"
+                        onkeydown="if(event.key==='Enter') doLogin()">
+                    <button class="eye-btn" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
+                </div>
+            </div>
+
+            <div class="login-error" id="loginError">账号或密码错误，请重试</div>
+
+            <button class="login-btn" onclick="doLogin()">登 录</button>
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← 返回前台网站</a>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

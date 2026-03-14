@@ -494,6 +494,55 @@ function deleteInquiry(id) {
 }
 
 /* ============================================================
+   账号设置
+   ============================================================ */
+function saveSettings() {
+  const oldPass     = getVal('set_old_pass');
+  const newUser     = getVal('set_new_user').trim();
+  const newPass     = getVal('set_new_pass');
+  const confirmPass = getVal('set_confirm_pass');
+  const errEl       = document.getElementById('settingsError');
+
+  const cred = getAdminCredentials();
+
+  // 验证当前密码
+  if (oldPass !== cred.pass) {
+    showSettingsError('当前密码不正确，请重新输入');
+    return;
+  }
+
+  // 如果填了新密码，验证格式和一致性
+  if (newPass) {
+    if (newPass.length < 6) {
+      showSettingsError('新密码至少需要6位');
+      return;
+    }
+    if (newPass !== confirmPass) {
+      showSettingsError('两次输入的新密码不一致');
+      return;
+    }
+  }
+
+  // 保存
+  const finalUser = newUser || cred.user;
+  const finalPass = newPass || cred.pass;
+  saveAdminCredentials(finalUser, finalPass);
+
+  // 清空输入
+  ['set_old_pass','set_new_user','set_new_pass','set_confirm_pass'].forEach(id => setVal(id, ''));
+  errEl && (errEl.style.display = 'none');
+  showToast('账号密码已更新！下次登录请使用新密码');
+}
+
+function showSettingsError(msg) {
+  const el = document.getElementById('settingsError');
+  if (!el) return;
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+/* ============================================================
    工具函数
    ============================================================ */
 function getVal(id) {
