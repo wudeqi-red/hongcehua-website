@@ -13,11 +13,12 @@
             justify-content: center;
             background: radial-gradient(ellipse at 30% 40%, rgba(255,71,87,0.18) 0%, transparent 60%),
                         radial-gradient(ellipse at 80% 80%, rgba(162,155,254,0.12) 0%, transparent 50%),
-                        var(--bg);
+                        #0d0d0d;
+            color: white;
         }
         .login-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            background: #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 24px;
             padding: 48px 40px;
             width: 100%;
@@ -26,15 +27,15 @@
         }
         .login-logo { text-align: center; margin-bottom: 32px; }
         .login-logo .logo-big { font-size: 36px; font-weight: 900; display: block; margin-bottom: 6px; }
-        .login-logo p { color: var(--text-muted); font-size: 14px; }
+        .login-logo p { color: rgba(255,255,255,0.45); font-size: 14px; }
         .login-form { display: flex; flex-direction: column; gap: 16px; }
         .login-field { display: flex; flex-direction: column; gap: 6px; }
-        .login-field label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .login-field label { font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 600; }
         .login-field .input-wrap { position: relative; }
         .login-field input {
             width: 100%;
             background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 12px;
             padding: 13px 16px;
             color: white;
@@ -44,11 +45,11 @@
             transition: border-color 0.2s;
             box-sizing: border-box;
         }
-        .login-field input:focus { border-color: var(--primary); }
-        .login-field input::placeholder { color: var(--text-muted); }
+        .login-field input:focus { border-color: #ff4757; }
+        .login-field input::placeholder { color: rgba(255,255,255,0.25); }
         .eye-btn {
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: var(--text-muted);
+            background: none; border: none; color: rgba(255,255,255,0.35);
             cursor: pointer; font-size: 16px; padding: 0; transition: color 0.2s;
         }
         .eye-btn:hover { color: white; }
@@ -69,13 +70,13 @@
         }
         .login-error.show { display: block; }
         .back-link { text-align: center; margin-top: 20px; }
-        .back-link a { color: var(--text-muted); font-size: 13px; text-decoration: none; transition: color 0.2s; }
+        .back-link a { color: rgba(255,255,255,0.35); font-size: 13px; text-decoration: none; transition: color 0.2s; }
         .back-link a:hover { color: white; }
         .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .reset-link { text-align: center; margin-top: 8px; }
-        .reset-link a { color: var(--text-muted); font-size: 12px; text-decoration: none; cursor: pointer; transition: color 0.2s; }
-        .reset-link a:hover { color: var(--primary); }
+        .reset-link a { color: rgba(255,255,255,0.35); font-size: 12px; text-decoration: none; cursor: pointer; transition: color 0.2s; }
+        .reset-link a:hover { color: #ff4757; }
 
         /* 重置密码面板 */
         .reset-panel {
@@ -85,19 +86,19 @@
         }
         .reset-panel.show { display: flex; }
         .panel-title { font-size: 15px; font-weight: 700; color: white; text-align: center; margin-bottom: 4px; }
-        .panel-sub { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+        .panel-sub { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.6; }
         .reset-code-box { display: flex; gap: 8px; }
         .reset-code-box input { flex: 1; }
         .reset-code-box button {
             background: rgba(255,71,87,0.15); border: 1px solid rgba(255,71,87,0.3);
-            color: var(--primary); border-radius: 10px; padding: 0 14px;
+            color: #ff4757; border-radius: 10px; padding: 0 14px;
             font-size: 13px; cursor: pointer; white-space: nowrap; font-family: inherit;
             transition: all 0.2s;
         }
         .reset-code-box button:hover { background: rgba(255,71,87,0.25); }
         .reset-code-box button:disabled { opacity: 0.5; cursor: not-allowed; }
         .back-to-login { text-align: center; margin-top: 4px; }
-        .back-to-login a { color: var(--text-muted); font-size: 13px; text-decoration: none; cursor: pointer; }
+        .back-to-login a { color: rgba(255,255,255,0.35); font-size: 13px; text-decoration: none; cursor: pointer; }
         .back-to-login a:hover { color: white; }
     </style>
 </head>
