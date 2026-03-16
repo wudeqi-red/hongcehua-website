@@ -157,3 +157,42 @@ const BLOGGERS_COL  = 'hc_bloggers';
 const CASES_COL     = 'hc_cases';
 const SUPPLIERS_COL = 'hc_suppliers';
 const INQUIRIES_COL = 'hc_inquiries';
+const HOMEPAGE_COL  = 'hc_homepage_config';
+
+/* ============================================================
+   首页配置模块
+   存储为单条文档（key: 'main'）
+   ============================================================ */
+
+/** 读取首页配置 */
+async function getHomepageConfig() {
+  try {
+    await initCloud();
+    const list = await dbWhere(HOMEPAGE_COL, { key: 'main' });
+    return list[0] || null;
+  } catch(e) {
+    console.warn('读取首页配置失败', e);
+    return null;
+  }
+}
+
+/** 保存首页配置 */
+async function saveHomepageConfigDB(config) {
+  await initCloud();
+  const list = await dbWhere(HOMEPAGE_COL, { key: 'main' });
+  if (list[0]) {
+    await dbUpdate(HOMEPAGE_COL, list[0]._id, { ...config, key: 'main' });
+  } else {
+    await dbAdd(HOMEPAGE_COL, { ...config, key: 'main' });
+  }
+}
+
+/** 上传首页配置图片到云存储 */
+async function uploadHpImage(file, slot) {
+  await initCloud();
+  const ext  = file.name.split('.').pop();
+  const path = `homepage/${slot}_${Date.now()}.${ext}`;
+  const res  = await _app.uploadFile({ cloudPath: path, filePath: file });
+  const urlRes = await _app.getTempFileURL({ fileList: [res.fileID] });
+  return urlRes.fileList[0]?.tempFileURL || '';
+}

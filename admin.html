@@ -48,6 +48,12 @@
                 </a>
             </div>
             <div class="sidebar-section">
+                <div class="sidebar-section-title">网站配置</div>
+                <a class="sidebar-item" onclick="showSection('homepage')">
+                    <i class="fas fa-home"></i> 首页配置
+                </a>
+            </div>
+            <div class="sidebar-section">
                 <div class="sidebar-section-title">其他</div>
                 <a class="sidebar-item" onclick="showSection('inquiries')">
                     <i class="fas fa-envelope"></i> 询盘记录
@@ -345,6 +351,208 @@
                         <button class="btn-cancel" onclick="closeAccountModal()">取消</button>
                         <button class="btn-save" onclick="saveAccount()">保存</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- 首页配置 -->
+            <div id="section-homepage" class="admin-section" style="display:none;">
+                <div class="admin-header">
+                    <h1>首页配置</h1>
+                    <button class="btn-add" onclick="saveHomepageConfig()">
+                        <i class="fas fa-save"></i> 保存并发布
+                    </button>
+                </div>
+
+                <!-- Hero 大图 -->
+                <div class="admin-table-card" style="margin-bottom:20px;">
+                    <div class="table-header"><h3><i class="fas fa-image" style="color:var(--primary);margin-right:8px;"></i>Hero 首屏大图</h3></div>
+                    <div style="padding:24px;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <div>
+                                <div class="form-field" style="margin-bottom:16px;">
+                                    <label>大图 URL（留空则使用上传图片）</label>
+                                    <input type="text" id="hp_hero_url" placeholder="https://images.unsplash.com/..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                                <div class="form-field" style="margin-bottom:16px;">
+                                    <label>主标题（支持 &lt;em&gt; 标签加红色高亮）</label>
+                                    <input type="text" id="hp_hero_title" placeholder="让每一次探店都成为品牌爆点" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                                <div class="form-field" style="margin-bottom:16px;">
+                                    <label>副标题</label>
+                                    <input type="text" id="hp_hero_sub" placeholder="整合10W+优质博主资源 · 3000+成功案例..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                                <div class="form-field">
+                                    <label>标语小字（顶部徽标文字）</label>
+                                    <input type="text" id="hp_hero_eyebrow" placeholder="本地生活 · MCN营销机构" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:8px;display:block;">或上传本地图片（推荐 1920×1080）</label>
+                                <div id="heroImgPreviewWrap" style="display:none;margin-bottom:10px;position:relative;">
+                                    <img id="heroImgPreview" style="width:100%;max-height:180px;border-radius:10px;border:1px solid var(--border);object-fit:cover;">
+                                    <button onclick="removeHpImg('hero')" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;">✕ 移除</button>
+                                </div>
+                                <label id="heroUploadLabel" style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:20px 16px;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                                    <i class="fas fa-cloud-upload-alt" style="color:var(--text-muted);font-size:22px;"></i>
+                                    <span style="color:var(--text-muted);font-size:13px;">点击上传 Hero 大图</span>
+                                    <input type="file" id="hp_hero_img" accept="image/*" style="display:none" onchange="previewHpImg(this,'hero')">
+                                </label>
+                                <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:12px;color:var(--text-muted);">
+                                    💡 当前图片：<span id="hp_hero_current" style="color:rgba(255,255,255,0.4);">默认 Unsplash 图片</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据条 -->
+                <div class="admin-table-card" style="margin-bottom:20px;">
+                    <div class="table-header"><h3><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:8px;"></i>首屏数据条（4个数字）</h3></div>
+                    <div style="padding:24px;">
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+                            <div class="form-field">
+                                <label>数字1（合作博主）</label>
+                                <input type="text" id="hp_stat1_num" placeholder="10" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                <input type="text" id="hp_stat1_suffix" placeholder="W+" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;" >
+                                <input type="text" id="hp_stat1_label" placeholder="合作博主" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                            </div>
+                            <div class="form-field">
+                                <label>数字2（成功案例）</label>
+                                <input type="text" id="hp_stat2_num" placeholder="3000" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                <input type="text" id="hp_stat2_suffix" placeholder="+" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                                <input type="text" id="hp_stat2_label" placeholder="成功案例" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                            </div>
+                            <div class="form-field">
+                                <label>数字3（品牌合作）</label>
+                                <input type="text" id="hp_stat3_num" placeholder="1000" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                <input type="text" id="hp_stat3_suffix" placeholder="+" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                                <input type="text" id="hp_stat3_label" placeholder="品牌合作" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                            </div>
+                            <div class="form-field">
+                                <label>数字4（供应商资源）</label>
+                                <input type="text" id="hp_stat4_num" placeholder="100" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                <input type="text" id="hp_stat4_suffix" placeholder="+" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                                <input type="text" id="hp_stat4_label" placeholder="供应商资源" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:12px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;margin-top:6px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关于我们 -->
+                <div class="admin-table-card" style="margin-bottom:20px;">
+                    <div class="table-header"><h3><i class="fas fa-users" style="color:var(--primary);margin-right:8px;"></i>关于我们板块</h3></div>
+                    <div style="padding:24px;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                            <div>
+                                <div class="form-field" style="margin-bottom:14px;">
+                                    <label>板块小标题</label>
+                                    <input type="text" id="hp_about_label" placeholder="关于红策划" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                                <div class="form-field" style="margin-bottom:14px;">
+                                    <label>大标题</label>
+                                    <input type="text" id="hp_about_title" placeholder="本地生活营销全链路服务商" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                                <div class="form-field">
+                                    <label>介绍文字</label>
+                                    <textarea id="hp_about_desc" rows="4" placeholder="红策划专注本地生活品牌策划与推广..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;resize:vertical;"></textarea>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:8px;display:block;">主图（左大图）</label>
+                                <div id="aboutImg1PreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
+                                    <img id="aboutImg1Preview" style="width:100%;max-height:120px;border-radius:8px;border:1px solid var(--border);object-fit:cover;">
+                                    <button onclick="removeHpImg('about1')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">✕</button>
+                                </div>
+                                <label style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:14px;cursor:pointer;margin-bottom:12px;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                                    <i class="fas fa-image" style="color:var(--text-muted);"></i>
+                                    <span style="color:var(--text-muted);font-size:13px;">上传关于我们主图</span>
+                                    <input type="file" id="hp_about1_img" accept="image/*" style="display:none" onchange="previewHpImg(this,'about1')">
+                                </label>
+                                <label style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:8px;display:block;">副图（右小图）</label>
+                                <div id="aboutImg2PreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
+                                    <img id="aboutImg2Preview" style="width:100%;max-height:100px;border-radius:8px;border:1px solid var(--border);object-fit:cover;">
+                                    <button onclick="removeHpImg('about2')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">✕</button>
+                                </div>
+                                <label style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:14px;cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                                    <i class="fas fa-image" style="color:var(--text-muted);"></i>
+                                    <span style="color:var(--text-muted);font-size:13px;">上传关于我们副图</span>
+                                    <input type="file" id="hp_about2_img" accept="image/*" style="display:none" onchange="previewHpImg(this,'about2')">
+                                </label>
+                                <div class="form-field" style="margin-top:12px;">
+                                    <label style="font-size:12px;">好评率数字（如：98）</label>
+                                    <input type="number" id="hp_about_rate" placeholder="98" min="0" max="100" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 合作流程背景图 -->
+                <div class="admin-table-card" style="margin-bottom:20px;">
+                    <div class="table-header"><h3><i class="fas fa-th-list" style="color:var(--primary);margin-right:8px;"></i>合作流程背景图</h3></div>
+                    <div style="padding:24px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                        <div>
+                            <div class="form-field" style="margin-bottom:14px;">
+                                <label>背景图 URL（留空则使用上传图片）</label>
+                                <input type="text" id="hp_process_url" placeholder="https://images.unsplash.com/..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                            </div>
+                            <div class="form-field">
+                                <label>板块标题</label>
+                                <input type="text" id="hp_process_title" placeholder="四步开启品牌增长" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <div>
+                            <div id="processImgPreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
+                                <img id="processImgPreview" style="width:100%;max-height:130px;border-radius:8px;border:1px solid var(--border);object-fit:cover;">
+                                <button onclick="removeHpImg('process')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">✕</button>
+                            </div>
+                            <label style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:16px;cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                                <i class="fas fa-cloud-upload-alt" style="color:var(--text-muted);font-size:20px;"></i>
+                                <span style="color:var(--text-muted);font-size:13px;">上传合作流程背景图（建议 1920×600）</span>
+                                <input type="file" id="hp_process_img" accept="image/*" style="display:none" onchange="previewHpImg(this,'process')">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 联系我们背景图 -->
+                <div class="admin-table-card" style="margin-bottom:20px;">
+                    <div class="table-header"><h3><i class="fas fa-phone-alt" style="color:var(--primary);margin-right:8px;"></i>联系我们板块</h3></div>
+                    <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <div>
+                            <div class="form-field" style="margin-bottom:14px;">
+                                <label>背景图 URL（留空则使用上传图片）</label>
+                                <input type="text" id="hp_contact_url" placeholder="https://images.unsplash.com/..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                            </div>
+                            <div class="form-field" style="margin-bottom:14px;">
+                                <label>联系电话</label>
+                                <input type="text" id="hp_contact_phone" placeholder="18860923047" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                            </div>
+                            <div class="form-field">
+                                <label>微信号</label>
+                                <input type="text" id="hp_contact_wechat" placeholder="superxhh1" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:white;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <div>
+                            <div id="contactImgPreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
+                                <img id="contactImgPreview" style="width:100%;max-height:130px;border-radius:8px;border:1px solid var(--border);object-fit:cover;">
+                                <button onclick="removeHpImg('contact')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">✕</button>
+                            </div>
+                            <label style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:16px;cursor:pointer;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                                <i class="fas fa-cloud-upload-alt" style="color:var(--text-muted);font-size:20px;"></i>
+                                <span style="color:var(--text-muted);font-size:13px;">上传联系我们背景图（建议 1920×800）</span>
+                                <input type="file" id="hp_contact_img" accept="image/*" style="display:none" onchange="previewHpImg(this,'contact')">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 保存提示 -->
+                <div style="display:flex;align-items:center;gap:16px;padding:20px 0;">
+                    <button class="btn-add" onclick="saveHomepageConfig()" style="padding:13px 36px;font-size:15px;">
+                        <i class="fas fa-save"></i> 保存并发布到前台
+                    </button>
+                    <span style="color:var(--text-muted);font-size:13px;">配置保存后，前台首页将立即生效</span>
                 </div>
             </div>
 

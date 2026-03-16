@@ -117,6 +117,8 @@ function showSection(name) {
 
   // 子账号页面进入时刷新列表
   if (name === 'accounts') renderAccountList();
+  // 首页配置进入时加载配置
+  if (name === 'homepage') loadHomepageConfig();
 }
 
 /* ============================================================
@@ -950,4 +952,199 @@ function showToast(msg, success = true) {
   t.style.opacity = '1';
   t.style.transform = 'translateY(0)';
   setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, 3000);
+}
+
+/* ============================================================
+   首页配置模块
+   ============================================================ */
+
+// 存储各图片的文件对象和已上传URL
+const _hpImgFiles = { hero: null, about1: null, about2: null, process: null, contact: null };
+const _hpImgUrls  = { hero: '',   about1: '',   about2: '',   process: '',   contact: '' };
+
+/** 进入首页配置时加载已有配置 */
+async function loadHomepageConfig() {
+  showLoadingOverlay(true);
+  try {
+    const cfg = await getHomepageConfig();
+    if (cfg) {
+      // Hero
+      setVal('hp_hero_url',     cfg.hero?.bgUrl    || '');
+      setVal('hp_hero_title',   cfg.hero?.title    || '');
+      setVal('hp_hero_sub',     cfg.hero?.sub      || '');
+      setVal('hp_hero_eyebrow', cfg.hero?.eyebrow  || '');
+      if (cfg.hero?.bgUrl) {
+        document.getElementById('hp_hero_current').textContent = '已使用自定义图片';
+      }
+      _hpImgUrls.hero    = cfg.hero?.bgUrl    || '';
+      _hpImgUrls.about1  = cfg.about?.img1Url || '';
+      _hpImgUrls.about2  = cfg.about?.img2Url || '';
+      _hpImgUrls.process = cfg.process?.bgUrl || '';
+      _hpImgUrls.contact = cfg.contact?.bgUrl || '';
+
+      // 数据条
+      const stats = cfg.stats || [];
+      ['1','2','3','4'].forEach((n, i) => {
+        setVal(`hp_stat${n}_num`,    stats[i]?.num    || '');
+        setVal(`hp_stat${n}_suffix`, stats[i]?.suffix || '');
+        setVal(`hp_stat${n}_label`,  stats[i]?.label  || '');
+      });
+
+      // 关于我们
+      setVal('hp_about_label', cfg.about?.label || '');
+      setVal('hp_about_title', cfg.about?.title || '');
+      setVal('hp_about_desc',  cfg.about?.desc  || '');
+      setVal('hp_about_rate',  cfg.about?.rate  || '');
+      if (cfg.about?.img1Url) { showHpImgPreview('about1', cfg.about.img1Url); }
+      if (cfg.about?.img2Url) { showHpImgPreview('about2', cfg.about.img2Url); }
+
+      // 合作流程
+      setVal('hp_process_url',   cfg.process?.bgUrl || '');
+      setVal('hp_process_title', cfg.process?.title || '');
+      if (cfg.process?.bgUrl) { showHpImgPreview('process', cfg.process.bgUrl); }
+
+      // 联系我们
+      setVal('hp_contact_url',    cfg.contact?.bgUrl  || '');
+      setVal('hp_contact_phone',  cfg.contact?.phone  || '');
+      setVal('hp_contact_wechat', cfg.contact?.wechat || '');
+      if (cfg.contact?.bgUrl) { showHpImgPreview('contact', cfg.contact.bgUrl); }
+    }
+  } catch(e) {
+    console.error('加载首页配置失败', e);
+  }
+  showLoadingOverlay(false);
+}
+
+/** 预览上传的图片 */
+function previewHpImg(input, slot) {
+  const file = input.files[0];
+  if (!file) return;
+  _hpImgFiles[slot] = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => showHpImgPreview(slot, e.target.result);
+  reader.readAsDataURL(file);
+}
+
+function showHpImgPreview(slot, src) {
+  const previewMap = {
+    hero:    ['heroImgPreview',     'heroImgPreviewWrap'],
+    about1:  ['aboutImg1Preview',   'aboutImg1PreviewWrap'],
+    about2:  ['aboutImg2Preview',   'aboutImg2PreviewWrap'],
+    process: ['processImgPreview',  'processImgPreviewWrap'],
+    contact: ['contactImgPreview',  'contactImgPreviewWrap'],
+  };
+  const [imgId, wrapId] = previewMap[slot] || [];
+  if (!imgId) return;
+  const img  = document.getElementById(imgId);
+  const wrap = document.getElementById(wrapId);
+  if (img)  img.src = src;
+  if (wrap) wrap.style.display = 'block';
+}
+
+function removeHpImg(slot) {
+  _hpImgFiles[slot] = null;
+  _hpImgUrls[slot]  = '';
+  const previewMap = {
+    hero:    ['heroImgPreview',     'heroImgPreviewWrap',    'hp_hero_img'],
+    about1:  ['aboutImg1Preview',   'aboutImg1PreviewWrap',  'hp_about1_img'],
+    about2:  ['aboutImg2Preview',   'aboutImg2PreviewWrap',  'hp_about2_img'],
+    process: ['processImgPreview',  'processImgPreviewWrap', 'hp_process_img'],
+    contact: ['contactImgPreview',  'contactImgPreviewWrap', 'hp_contact_img'],
+  };
+  const [imgId, wrapId, inputId] = previewMap[slot] || [];
+  if (imgId)   { const el = document.getElementById(imgId);   if (el) el.src = ''; }
+  if (wrapId)  { const el = document.getElementById(wrapId);  if (el) el.style.display = 'none'; }
+  if (inputId) { const el = document.getElementById(inputId); if (el) el.value = ''; }
+  if (slot === 'hero') {
+    const cur = document.getElementById('hp_hero_current');
+    if (cur) cur.textContent = '默认 Unsplash 图片';
+  }
+}
+
+/** 上传单张图片，返回 URL */
+async function _uploadHpSlot(slot) {
+  if (_hpImgFiles[slot]) {
+    const url = await uploadHpImage(_hpImgFiles[slot], slot);
+    _hpImgUrls[slot] = url;
+    _hpImgFiles[slot] = null;
+    return url;
+  }
+  // 如果填了URL字段，优先用URL字段
+  const urlFieldMap = { hero: 'hp_hero_url', process: 'hp_process_url', contact: 'hp_contact_url' };
+  if (urlFieldMap[slot]) {
+    const urlVal = getVal(urlFieldMap[slot]).trim();
+    if (urlVal) return urlVal;
+  }
+  return _hpImgUrls[slot] || '';
+}
+
+/** 保存首页配置 */
+async function saveHomepageConfig() {
+  const saveBtns = document.querySelectorAll('#section-homepage .btn-add');
+  saveBtns.forEach(b => { b.disabled = true; });
+  showToast('正在上传图片并保存...', true);
+
+  try {
+    // 并行上传所有需要上传的图片
+    const [heroUrl, about1Url, about2Url, processUrl, contactUrl] = await Promise.all([
+      _uploadHpSlot('hero'),
+      _uploadHpSlot('about1'),
+      _uploadHpSlot('about2'),
+      _uploadHpSlot('process'),
+      _uploadHpSlot('contact'),
+    ]);
+
+    const stats = ['1','2','3','4'].map(n => ({
+      num:    getVal(`hp_stat${n}_num`).trim(),
+      suffix: getVal(`hp_stat${n}_suffix`).trim(),
+      label:  getVal(`hp_stat${n}_label`).trim(),
+    }));
+
+    const config = {
+      hero: {
+        bgUrl:   heroUrl,
+        title:   getVal('hp_hero_title').trim(),
+        sub:     getVal('hp_hero_sub').trim(),
+        eyebrow: getVal('hp_hero_eyebrow').trim(),
+      },
+      stats,
+      about: {
+        label:   getVal('hp_about_label').trim(),
+        title:   getVal('hp_about_title').trim(),
+        desc:    getVal('hp_about_desc').trim(),
+        rate:    getVal('hp_about_rate').trim(),
+        img1Url: about1Url,
+        img2Url: about2Url,
+      },
+      process: {
+        bgUrl: processUrl,
+        title: getVal('hp_process_title').trim(),
+      },
+      contact: {
+        bgUrl:  contactUrl,
+        phone:  getVal('hp_contact_phone').trim(),
+        wechat: getVal('hp_contact_wechat').trim(),
+      },
+      updatedAt: new Date().toISOString(),
+    };
+
+    await saveHomepageConfigDB(config);
+
+    // 同时写入 localStorage 供前台快速读取
+    localStorage.setItem('hc_homepage_config', JSON.stringify(config));
+
+    showToast('首页配置已保存！前台将立即生效 ✅');
+
+    // 更新 Hero 当前图片提示
+    if (heroUrl) {
+      const cur = document.getElementById('hp_hero_current');
+      if (cur) cur.textContent = '已使用自定义图片';
+    }
+  } catch(e) {
+    console.error('保存首页配置失败', e);
+    showToast('保存失败，请检查网络', false);
+  } finally {
+    saveBtns.forEach(b => { b.disabled = false; });
+  }
 }
