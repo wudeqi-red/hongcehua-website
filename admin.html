@@ -750,6 +750,19 @@
                         <input type="file" id="c_image" accept="image/*" style="display:none" onchange="previewCaseImg(this)">
                     </label>
                 </div>
+                <div class="form-field">
+                    <label>案例报告 PDF <span style="color:var(--text-muted);font-weight:400;font-size:12px;">（可选，访客可在弹窗内直接阅读）</span></label>
+                    <div id="casePdfPreviewWrap" style="display:none;margin-bottom:10px;padding:12px 14px;background:rgba(255,71,87,0.07);border:1px solid rgba(255,71,87,0.2);border-radius:10px;display:none;align-items:center;gap:10px;">
+                        <i class="fas fa-file-pdf" style="color:#ff4757;font-size:20px;"></i>
+                        <span id="casePdfFileName" style="color:rgba(255,255,255,0.8);font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                        <button onclick="removeCasePdf()" style="background:none;border:none;color:#ff6b81;font-size:12px;cursor:pointer;white-space:nowrap;">✕ 移除</button>
+                    </div>
+                    <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <i class="fas fa-file-pdf" style="color:var(--text-muted);font-size:20px;"></i>
+                        <span id="casePdfUploadText" style="color:var(--text-muted);font-size:13px;">点击上传案例报告 PDF（文件大小建议 &lt; 20MB）</span>
+                        <input type="file" id="c_pdf" accept="application/pdf" style="display:none" onchange="selectCasePdf(this)">
+                    </label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeCaseAdminModal()">取消</button>

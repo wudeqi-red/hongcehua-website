@@ -196,3 +196,25 @@ async function uploadHpImage(file, slot) {
   const urlRes = await _app.getTempFileURL({ fileList: [res.fileID] });
   return urlRes.fileList[0]?.tempFileURL || '';
 }
+
+/** 上传案例 PDF 到云存储，返回临时访问 URL */
+async function uploadCasePDF(file, caseTitle) {
+  await initCloud();
+  // 用时间戳 + 安全文件名避免冲突
+  const safeName = caseTitle.replace(/[^\w\u4e00-\u9fa5]/g, '_').slice(0, 30);
+  const path = `cases/pdf/${safeName}_${Date.now()}.pdf`;
+  const res  = await _app.uploadFile({ cloudPath: path, filePath: file });
+  // 获取长期 fileID（存入数据库），同时拿一个临时URL用于立即预览
+  const urlRes = await _app.getTempFileURL({ fileList: [res.fileID] });
+  return {
+    fileID:  res.fileID,
+    tempUrl: urlRes.fileList[0]?.tempFileURL || '',
+  };
+}
+
+/** 根据已存的 fileID 刷新临时访问 URL（前台展示时调用） */
+async function refreshPDFUrl(fileID) {
+  await initCloud();
+  const urlRes = await _app.getTempFileURL({ fileList: [fileID] });
+  return urlRes.fileList[0]?.tempFileURL || '';
+}

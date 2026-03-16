@@ -414,10 +414,12 @@ function exportBloggersExcel() {
 }
 
 /* ============================================================
-   案例图片上传（CloudBase 云存储）
+   案例图片 / PDF 上传（CloudBase 云存储）
    ============================================================ */
 let _caseImgFile = null;  // 当前选择的图片文件
 let _caseImgUrl  = '';    // 已上传的图片URL
+let _casePdfFile = null;  // 当前选择的 PDF 文件
+let _casePdfFileID = '';  // 已上传的 PDF fileID（存数据库）
 
 function previewCaseImg(input) {
   const file = input.files[0];
@@ -456,6 +458,25 @@ async function uploadCaseImg() {
   }
 }
 
+/* --- PDF 相关 --- */
+function selectCasePdf(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _casePdfFile = file;
+  _casePdfFileID = ''; // 新文件，清空旧 fileID
+  document.getElementById('casePdfFileName').textContent = file.name;
+  document.getElementById('casePdfPreviewWrap').style.display = 'flex';
+  document.getElementById('casePdfUploadText').textContent = '重新选择 PDF';
+}
+
+function removeCasePdf() {
+  _casePdfFile   = null;
+  _casePdfFileID = '';
+  document.getElementById('c_pdf').value = '';
+  document.getElementById('casePdfPreviewWrap').style.display = 'none';
+  document.getElementById('casePdfUploadText').textContent = '点击上传案例报告 PDF（文件大小建议 < 20MB）';
+}
+
 /* ============================================================
    案例管理
    ============================================================ */
@@ -492,6 +513,8 @@ function renderAdminCases() {
 function openCaseModal() {
   editingCaseId = null;
   clearVals(['c_title','c_desc','c_exposure','c_interaction','c_conversion']);
+  removeCaseImg();
+  removeCasePdf();
   document.getElementById('caseAdminModal').classList.add('active');
 }
 
@@ -515,6 +538,17 @@ function editCase(id) {
   } else {
     document.getElementById('caseImgPreviewWrap').style.display = 'none';
   }
+  // 显示已有 PDF
+  _casePdfFile   = null;
+  _casePdfFileID = c.pdfFileID || '';
+  if (_casePdfFileID) {
+    document.getElementById('casePdfFileName').textContent = c.pdfName || '已上传 PDF';
+    document.getElementById('casePdfPreviewWrap').style.display = 'flex';
+    document.getElementById('casePdfUploadText').textContent = '重新选择 PDF';
+  } else {
+    document.getElementById('casePdfPreviewWrap').style.display = 'none';
+    document.getElementById('casePdfUploadText').textContent = '点击上传案例报告 PDF（文件大小建议 < 20MB）';
+  }
   document.getElementById('caseAdminModal').classList.add('active');
 }
 
@@ -522,6 +556,7 @@ function closeCaseAdminModal() {
   document.getElementById('caseAdminModal').classList.remove('active');
   editingCaseId = null;
   removeCaseImg();
+  removeCasePdf();
 }
 
 async function saveCase() {
@@ -549,6 +584,25 @@ async function saveCase() {
     coverUrl = await uploadCaseImg();
   }
 
+  // 上传 PDF（如果有新选择的文件）
+  let pdfFileID = _casePdfFileID;
+  let pdfName   = '';
+  if (_casePdfFile) {
+    showToast('PDF 上传中...', true);
+    try {
+      const result = await uploadCasePDF(_casePdfFile, getVal('c_title').trim() || 'case');
+      pdfFileID = result.fileID;
+      pdfName   = _casePdfFile.name;
+    } catch(e) {
+      console.error('PDF上传失败', e);
+      showToast('PDF上传失败，其他信息仍正常保存', false);
+    }
+  } else if (_casePdfFileID) {
+    // 编辑时没有重新选择，保留原来的名字
+    const existing = adminCases.find(x => x._id === editingCaseId);
+    pdfName = existing?.pdfName || '';
+  }
+
   const data = {
     title,
     type:        getVal('c_type'),
@@ -558,6 +612,8 @@ async function saveCase() {
     interaction: getVal('c_interaction') || '—',
     conversion:  getVal('c_conversion') || '—',
     coverUrl:    coverUrl || '',
+    pdfFileID:   pdfFileID || '',
+    pdfName:     pdfName   || '',
   };
 
   try {
