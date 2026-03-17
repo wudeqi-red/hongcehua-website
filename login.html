@@ -6,146 +6,444 @@
     <title>后台登录 - 红策划</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(ellipse at 30% 40%, rgba(255,71,87,0.18) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 80%, rgba(162,155,254,0.12) 0%, transparent 50%),
-                        #0d0d0d;
-            color: white;
+            background: #0a0a0a;
+            overflow: hidden;
+            font-family: inherit;
         }
-        .login-box {
-            background: #1e1e1e;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            padding: 48px 40px;
+
+        /* ====== 涂鸦背景画布 ====== */
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+            height: 100%;
+            z-index: 0;
         }
-        .login-logo { text-align: center; margin-bottom: 32px; }
-        .login-logo .logo-big { font-size: 36px; font-weight: 900; display: block; margin-bottom: 6px; }
-        .login-logo p { color: rgba(255,255,255,0.45); font-size: 14px; }
-        .login-form { display: flex; flex-direction: column; gap: 16px; }
-        .login-field { display: flex; flex-direction: column; gap: 6px; }
-        .login-field label { font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 600; }
-        .login-field .input-wrap { position: relative; }
+
+        /* ====== 浮动小红花 ====== */
+        .float-flower {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.5); }
+            10%  { opacity: 0.8; }
+            90%  { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-100vh) rotate(720deg) scale(1.2); }
+        }
+
+        /* ====== 登录容器 ====== */
+        .login-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+        }
+
+        /* ====== 不规则登录框 ====== */
+        .login-box {
+            position: relative;
+            background: rgba(10, 10, 10, 0.88);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 8px 30px 8px;
+            padding: 48px 44px 40px;
+            clip-path: polygon(
+                0% 4%, 3% 0%, 97% 0%, 100% 3%,
+                100% 96%, 97% 100%, 3% 100%, 0% 97%
+            );
+            box-shadow:
+                0 0 0 2px #ff4757,
+                0 0 0 4px #ff6348,
+                0 0 30px rgba(255,71,87,0.4),
+                0 0 80px rgba(255,71,87,0.15),
+                inset 0 0 60px rgba(255,71,87,0.03);
+            animation: boxPulse 3s ease-in-out infinite;
+        }
+        @keyframes boxPulse {
+            0%, 100% { box-shadow: 0 0 0 2px #ff4757, 0 0 0 4px #ff6348, 0 0 30px rgba(255,71,87,0.4), 0 0 80px rgba(255,71,87,0.15), inset 0 0 60px rgba(255,71,87,0.03); }
+            50%       { box-shadow: 0 0 0 2px #ff6b81, 0 0 0 4px #ffd32a, 0 0 50px rgba(255,71,87,0.6), 0 0 120px rgba(255,71,87,0.25), inset 0 0 80px rgba(255,71,87,0.06); }
+        }
+
+        /* 涂鸦笔触边框装饰 */
+        .login-box::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 34px 10px 34px 10px;
+            background: transparent;
+            border: 3px solid transparent;
+            border-image: repeating-linear-gradient(
+                45deg,
+                #ff4757, #ff4757 8px,
+                transparent 8px, transparent 16px,
+                #ffd32a 16px, #ffd32a 24px,
+                transparent 24px, transparent 32px,
+                #7bed9f 32px, #7bed9f 40px,
+                transparent 40px, transparent 48px,
+                #70a1ff 48px, #70a1ff 56px,
+                transparent 56px, transparent 64px
+            ) 1;
+            opacity: 0.5;
+            animation: borderDash 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes borderDash {
+            to { filter: hue-rotate(360deg); }
+        }
+
+        /* 贴纸装饰 */
+        .sticker {
+            position: absolute;
+            font-size: 28px;
+            animation: stickerWiggle 2s ease-in-out infinite;
+            cursor: default;
+            user-select: none;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        .sticker-1 { top: -18px; right: 40px; animation-delay: 0s; transform: rotate(15deg); }
+        .sticker-2 { top: -14px; left: 50px; animation-delay: 0.5s; transform: rotate(-10deg); }
+        .sticker-3 { bottom: -18px; left: 60px; animation-delay: 1s; transform: rotate(20deg); }
+        .sticker-4 { bottom: -14px; right: 50px; animation-delay: 1.5s; transform: rotate(-8deg); }
+        @keyframes stickerWiggle {
+            0%, 100% { transform: rotate(var(--r, 15deg)) scale(1); }
+            50%       { transform: rotate(calc(var(--r, 15deg) + 10deg)) scale(1.15); }
+        }
+        .sticker-1 { --r: 15deg; }
+        .sticker-2 { --r: -10deg; }
+        .sticker-3 { --r: 20deg; }
+        .sticker-4 { --r: -8deg; }
+
+        /* ====== LOGO ====== */
+        .login-logo {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .logo-graffiti {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ff4757 0%, #ffd32a 40%, #ff6b81 70%, #7bed9f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 8px;
+            animation: logoShine 3s ease-in-out infinite;
+            text-shadow: none;
+            position: relative;
+        }
+        @keyframes logoShine {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(255,71,87,0.6)); }
+            50%       { filter: brightness(1.3) drop-shadow(0 0 25px rgba(255,211,42,0.8)); }
+        }
+        .logo-subtitle {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ====== 表单 ====== */
+        .login-form { display: flex; flex-direction: column; gap: 20px; }
+        .login-field { display: flex; flex-direction: column; gap: 8px; }
+        .login-field label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+        }
+        .input-wrap { position: relative; }
+
         .login-field input {
             width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 13px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 4px 16px 4px 16px;
+            padding: 13px 48px 13px 18px;
             color: white;
             font-size: 15px;
             font-family: inherit;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
             box-sizing: border-box;
+            position: relative;
+            z-index: 1;
         }
-        .login-field input:focus { border-color: #ff4757; }
-        .login-field input::placeholder { color: rgba(255,255,255,0.25); }
+        .login-field input:focus {
+            border-color: #ff4757;
+            background: rgba(255,71,87,0.06);
+            box-shadow: 0 0 0 3px rgba(255,71,87,0.15), 0 0 20px rgba(255,71,87,0.1);
+        }
+        .login-field input::placeholder { color: rgba(255,255,255,0.2); }
+
+        /* 输入时的字符花朵效果容器 */
+        .input-flowers {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+            border-radius: 4px 16px 4px 16px;
+        }
+        .char-flower {
+            position: absolute;
+            font-size: 14px;
+            animation: charFlower 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes charFlower {
+            0%   { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-30px) scale(0.5) rotate(180deg); }
+        }
+
         .eye-btn {
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
             background: none; border: none; color: rgba(255,255,255,0.35);
             cursor: pointer; font-size: 16px; padding: 0; transition: color 0.2s;
+            z-index: 3;
         }
         .eye-btn:hover { color: white; }
-        .login-btn {
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
-            color: white; border: none; border-radius: 12px;
-            padding: 14px; font-size: 16px; font-weight: 700;
-            cursor: pointer; font-family: inherit; transition: all 0.3s;
-            margin-top: 4px; box-shadow: 0 8px 30px rgba(255,71,87,0.35);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,71,87,0.5); }
-        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ====== 错误提示 ====== */
         .login-error {
-            background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3);
-            color: #ff6b81; border-radius: 10px; padding: 10px 14px;
-            font-size: 13px; display: none; text-align: center;
+            background: rgba(255,71,87,0.12);
+            border: 1px solid rgba(255,71,87,0.4);
+            color: #ff6b81;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+            animation: shakeError 0.4s ease;
         }
         .login-error.show { display: block; }
-        .back-link { text-align: center; margin-top: 20px; }
-        .back-link a { color: rgba(255,255,255,0.35); font-size: 13px; text-decoration: none; transition: color 0.2s; }
-        .back-link a:hover { color: white; }
-        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .reset-link { text-align: center; margin-top: 8px; }
-        .reset-link a { color: rgba(255,255,255,0.35); font-size: 12px; text-decoration: none; cursor: pointer; transition: color 0.2s; }
-        .reset-link a:hover { color: #ff4757; }
-
-        /* 重置密码面板 */
-        .reset-panel {
-            display: none;
-            flex-direction: column;
-            gap: 14px;
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%       { transform: translateX(-8px); }
+            40%       { transform: translateX(8px); }
+            60%       { transform: translateX(-5px); }
+            80%       { transform: translateX(5px); }
         }
+
+        /* ====== 登录按钮（小红花徽章） ====== */
+        .login-btn-wrap {
+            position: relative;
+            margin-top: 8px;
+        }
+        .login-btn {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, #ff4757 0%, #ff6348 50%, #ffd32a 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 8px 30px rgba(255,71,87,0.5), 0 0 0 3px rgba(255,211,42,0.3);
+            overflow: hidden;
+            z-index: 1;
+        }
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #ffd32a, #ff4757, #7bed9f, #70a1ff);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: inherit;
+        }
+        .login-btn:hover::before { opacity: 1; }
+        .login-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(255,71,87,0.7), 0 0 0 4px rgba(255,211,42,0.5);
+            letter-spacing: 6px;
+        }
+        .login-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .login-btn.spinning { animation: btnSpin 0.6s ease-in-out; }
+        @keyframes btnSpin {
+            0%   { transform: rotate(0deg) scale(1); }
+            50%  { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .btn-inner { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        /* 粒子容器 */
+        #particleCanvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ====== 辅助链接 ====== */
+        .reset-link { text-align: center; }
+        .reset-link a {
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            letter-spacing: 1px;
+        }
+        .reset-link a:hover { color: #ffd32a; }
+        .back-link { text-align: center; margin-top: 24px; }
+        .back-link a {
+            color: rgba(255,255,255,0.25);
+            font-size: 12px;
+            text-decoration: none;
+            transition: color 0.2s;
+            letter-spacing: 1px;
+        }
+        .back-link a:hover { color: rgba(255,255,255,0.7); }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ====== 重置密码面板 ====== */
+        .reset-panel { display: none; flex-direction: column; gap: 16px; }
         .reset-panel.show { display: flex; }
-        .panel-title { font-size: 15px; font-weight: 700; color: white; text-align: center; margin-bottom: 4px; }
-        .panel-sub { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.6; }
+        .panel-title {
+            font-size: 16px; font-weight: 800; color: white;
+            text-align: center; letter-spacing: 2px;
+        }
+        .panel-sub {
+            font-size: 12px; color: rgba(255,255,255,0.4);
+            text-align: center; line-height: 1.8;
+        }
         .reset-code-box { display: flex; gap: 8px; }
         .reset-code-box input { flex: 1; }
         .reset-code-box button {
-            background: rgba(255,71,87,0.15); border: 1px solid rgba(255,71,87,0.3);
+            background: rgba(255,71,87,0.15);
+            border: 1px solid rgba(255,71,87,0.3);
             color: #ff4757; border-radius: 10px; padding: 0 14px;
             font-size: 13px; cursor: pointer; white-space: nowrap; font-family: inherit;
             transition: all 0.2s;
         }
         .reset-code-box button:hover { background: rgba(255,71,87,0.25); }
-        .reset-code-box button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .back-to-login { text-align: center; margin-top: 4px; }
-        .back-to-login a { color: rgba(255,255,255,0.35); font-size: 13px; text-decoration: none; cursor: pointer; }
+        .back-to-login { text-align: center; }
+        .back-to-login a {
+            color: rgba(255,255,255,0.3); font-size: 13px;
+            text-decoration: none; cursor: pointer; transition: color 0.2s;
+        }
         .back-to-login a:hover { color: white; }
+
+        /* ====== 扫光效果 ====== */
+        .scan-line {
+            position: fixed;
+            left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,71,87,0.6), rgba(255,211,42,0.6), transparent);
+            animation: scanLine 6s linear infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        @keyframes scanLine {
+            0%   { top: -2px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <div class="login-logo">
-            <span class="logo-big">🔴 红<span style="color:var(--primary)">策划</span></span>
-            <p>后台管理系统 · 请登录</p>
-        </div>
 
-        <!-- 登录面板 -->
-        <div class="login-form" id="loginPanel">
-            <div class="login-field">
-                <label>账号</label>
-                <div class="input-wrap">
-                    <input type="text" id="loginUser" placeholder="请输入账号" autocomplete="username">
-                </div>
-            </div>
-            <div class="login-field">
-                <label>密码</label>
-                <div class="input-wrap">
-                    <input type="password" id="loginPass" placeholder="请输入密码" autocomplete="current-password"
-                        onkeydown="if(event.key==='Enter') doLogin()">
-                    <button class="eye-btn" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
-                </div>
-            </div>
-            <div class="login-error" id="loginError">账号或密码错误，请重试</div>
-            <button class="login-btn" id="loginBtn" onclick="doLogin()">登 录</button>
-            <div class="reset-link">
-                <a onclick="showReset()">忘记密码？</a>
-            </div>
-        </div>
+    <!-- 背景画布 -->
+    <canvas id="bgCanvas"></canvas>
+    <!-- 粒子画布 -->
+    <canvas id="particleCanvas"></canvas>
+    <!-- 扫光线 -->
+    <div class="scan-line"></div>
 
-        <!-- 忘记密码面板（超级重置码） -->
-        <div class="reset-panel" id="resetPanel">
-            <div class="panel-title">重置管理员密码</div>
-            <div class="panel-sub">请输入超级重置码，重置后密码将恢复为默认值<br><strong style="color:white">hongcehua2024</strong></div>
-            <div class="login-field">
-                <label>超级重置码</label>
-                <div class="input-wrap">
-                    <input type="password" id="resetCode" placeholder="请输入超级重置码">
-                    <button class="eye-btn" onclick="togglePass('resetCode', this)" tabindex="-1">👁</button>
+    <div class="login-wrap">
+        <div class="login-box">
+            <!-- 贴纸 -->
+            <span class="sticker sticker-1">🌸</span>
+            <span class="sticker sticker-2">✨</span>
+            <span class="sticker sticker-3">🔥</span>
+            <span class="sticker sticker-4">💥</span>
+
+            <!-- LOGO -->
+            <div class="login-logo">
+                <span class="logo-graffiti">🔴 红策划</span>
+                <span class="logo-subtitle">ADMIN · SYSTEM</span>
+            </div>
+
+            <!-- 登录面板 -->
+            <div class="login-form" id="loginPanel">
+                <div class="login-field">
+                    <label>账 号</label>
+                    <div class="input-wrap">
+                        <div class="input-flowers" id="userFlowers"></div>
+                        <input type="text" id="loginUser" placeholder="请输入账号" autocomplete="username"
+                               oninput="spawnFlower(this, 'userFlowers')">
+                    </div>
+                </div>
+                <div class="login-field">
+                    <label>密 码</label>
+                    <div class="input-wrap">
+                        <div class="input-flowers" id="passFlowers"></div>
+                        <input type="password" id="loginPass" placeholder="请输入密码" autocomplete="current-password"
+                               oninput="spawnFlower(this, 'passFlowers')"
+                               onkeydown="if(event.key==='Enter') doLogin()">
+                        <button class="eye-btn" onclick="togglePass('loginPass', this)" tabindex="-1">👁</button>
+                    </div>
+                </div>
+                <div class="login-error" id="loginError">账号或密码错误，请重试</div>
+                <div class="login-btn-wrap">
+                    <button class="login-btn" id="loginBtn" onclick="doLogin()">
+                        <div class="btn-inner">
+                            <span>🌸</span><span>进入后台</span><span>🌸</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="reset-link">
+                    <a onclick="showReset()">忘记密码？</a>
                 </div>
             </div>
-            <div class="login-error" id="resetError"></div>
-            <button class="login-btn" onclick="doReset()">确认重置</button>
-            <div class="back-to-login"><a onclick="showLogin()">← 返回登录</a></div>
+
+            <!-- 重置密码面板 -->
+            <div class="reset-panel" id="resetPanel">
+                <div class="panel-title">重置管理员密码</div>
+                <div class="panel-sub">输入超级重置码，密码将恢复为默认值<br><strong style="color:#ffd32a">hongcehua2024</strong></div>
+                <div class="login-field">
+                    <label>超级重置码</label>
+                    <div class="input-wrap">
+                        <input type="password" id="resetCode" placeholder="请输入超级重置码">
+                        <button class="eye-btn" onclick="togglePass('resetCode', this)" tabindex="-1">👁</button>
+                    </div>
+                </div>
+                <div class="login-error" id="resetError"></div>
+                <div class="login-btn-wrap">
+                    <button class="login-btn" onclick="doReset()">
+                        <div class="btn-inner"><span>确认重置</span></div>
+                    </button>
+                </div>
+                <div class="back-to-login"><a onclick="showLogin()">← 返回登录</a></div>
+            </div>
         </div>
 
         <div class="back-link">
@@ -153,24 +451,243 @@
         </div>
     </div>
 
-    <!-- CloudBase SDK -->
     <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.11.0/cloudbase.full.js"></script>
     <script src="js/cloud.js"></script>
     <script>
-    /* ---- 页面初始化 ---- */
+    /* ============================================================
+       背景涂鸦画布
+    ============================================================ */
+    (function initBg() {
+        const canvas = document.getElementById('bgCanvas');
+        const ctx    = canvas.getContext('2d');
+        let W, H;
+
+        const FLOWERS = ['🌸','🌺','✿','❀','🌼','🌻'];
+        const COLORS  = ['#ff4757','#ffd32a','#7bed9f','#70a1ff','#ff6b81','#eccc68','#a29bfe','#fd79a8'];
+
+        function resize() {
+            W = canvas.width  = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            drawBg();
+        }
+
+        function drawBg() {
+            ctx.clearRect(0, 0, W, H);
+
+            // 深色底色
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, W, H);
+
+            // 彩色放射渐变光晕
+            const glows = [
+                { x: W*0.1,  y: H*0.2,  r: W*0.5,  c: 'rgba(255,71,87,0.12)'  },
+                { x: W*0.9,  y: H*0.15, r: W*0.4,  c: 'rgba(112,161,255,0.10)' },
+                { x: W*0.5,  y: H*0.85, r: W*0.45, c: 'rgba(255,211,42,0.08)'  },
+                { x: W*0.85, y: H*0.7,  r: W*0.35, c: 'rgba(123,237,159,0.08)' },
+            ];
+            glows.forEach(g => {
+                const grad = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, g.r);
+                grad.addColorStop(0, g.c);
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+            });
+
+            // 涂鸦线条
+            for (let i = 0; i < 18; i++) {
+                ctx.save();
+                ctx.strokeStyle = COLORS[i % COLORS.length];
+                ctx.lineWidth   = Math.random() * 4 + 1;
+                ctx.globalAlpha = Math.random() * 0.25 + 0.05;
+                ctx.lineCap     = 'round';
+                ctx.beginPath();
+                const x0 = Math.random() * W;
+                const y0 = Math.random() * H;
+                ctx.moveTo(x0, y0);
+                for (let j = 0; j < 4; j++) {
+                    const cpx = x0 + (Math.random() - 0.5) * 400;
+                    const cpy = y0 + (Math.random() - 0.5) * 300;
+                    const x1  = x0 + (Math.random() - 0.5) * 600;
+                    const y1  = y0 + (Math.random() - 0.5) * 400;
+                    ctx.quadraticCurveTo(cpx, cpy, x1, y1);
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 涂鸦文字装饰
+            const tags = ['HONG', 'RED✿', 'MCN★', '策划', 'BLOOM', '小红', 'GRAFFITI', '爆款'];
+            tags.forEach((tag, i) => {
+                ctx.save();
+                const x = (W / tags.length) * i + W / tags.length * 0.5;
+                const y = Math.random() * H * 0.8 + H * 0.1;
+                ctx.translate(x, y);
+                ctx.rotate((Math.random() - 0.5) * 0.8);
+                ctx.font = `bold ${Math.random() * 30 + 20}px Arial Black, sans-serif`;
+                ctx.fillStyle = COLORS[i % COLORS.length];
+                ctx.globalAlpha = 0.06 + Math.random() * 0.06;
+                ctx.strokeStyle = COLORS[(i+2) % COLORS.length];
+                ctx.lineWidth   = 2;
+                ctx.globalAlpha = 0.08;
+                ctx.strokeText(tag, 0, 0);
+                ctx.restore();
+            });
+
+            // 散落大花朵 emoji（用文字绘制）
+            for (let i = 0; i < 25; i++) {
+                ctx.save();
+                ctx.font        = `${Math.random() * 36 + 16}px serif`;
+                ctx.globalAlpha = Math.random() * 0.12 + 0.03;
+                ctx.fillText(
+                    FLOWERS[Math.floor(Math.random() * FLOWERS.length)],
+                    Math.random() * W,
+                    Math.random() * H
+                );
+                ctx.restore();
+            }
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+    })();
+
+    /* ============================================================
+       浮动小红花
+    ============================================================ */
+    (function initFloatFlowers() {
+        const flowers = ['🌸','🌺','✿','❀','💮','🌼'];
+        const colors  = ['#ff4757','#ffd32a','#7bed9f','#70a1ff','#ff6b81','#eccc68'];
+
+        function spawnFloat() {
+            const el = document.createElement('div');
+            el.className = 'float-flower';
+            el.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+            const size = Math.random() * 20 + 12;
+            el.style.cssText = `
+                left: ${Math.random() * 100}vw;
+                bottom: -${size}px;
+                font-size: ${size}px;
+                animation-duration: ${Math.random() * 8 + 6}s;
+                animation-delay: ${Math.random() * 3}s;
+                filter: drop-shadow(0 0 6px ${colors[Math.floor(Math.random() * colors.length)]});
+            `;
+            document.body.appendChild(el);
+            const dur = parseFloat(el.style.animationDuration) * 1000
+                      + parseFloat(el.style.animationDelay || 0) * 1000;
+            setTimeout(() => el.remove(), dur + 500);
+        }
+
+        setInterval(spawnFloat, 600);
+        for (let i = 0; i < 8; i++) setTimeout(spawnFloat, i * 200);
+    })();
+
+    /* ============================================================
+       输入框字符变小红花动画
+    ============================================================ */
+    const MINI_FLOWERS = ['🌸','✿','❀','🌺','💮','⚘','🌼'];
+    const FLOWER_COLORS = ['#ff4757','#ffd32a','#7bed9f','#70a1ff','#ff6b81','#eccc68','#a29bfe'];
+
+    function spawnFlower(input, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const el = document.createElement('span');
+        el.className = 'char-flower';
+        el.textContent = MINI_FLOWERS[Math.floor(Math.random() * MINI_FLOWERS.length)];
+
+        // 在输入框内随机位置
+        const x = Math.random() * (input.offsetWidth - 30) + 5;
+        el.style.cssText = `
+            left: ${x}px;
+            bottom: 4px;
+            color: ${FLOWER_COLORS[Math.floor(Math.random() * FLOWER_COLORS.length)]};
+            filter: drop-shadow(0 0 4px currentColor);
+        `;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 600);
+    }
+
+    /* ============================================================
+       粒子爆炸（登录按钮点击）
+    ============================================================ */
+    const pCanvas = document.getElementById('particleCanvas');
+    const pCtx    = pCanvas.getContext('2d');
+    pCanvas.width  = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+    window.addEventListener('resize', () => {
+        pCanvas.width  = window.innerWidth;
+        pCanvas.height = window.innerHeight;
+    });
+
+    let particles = [];
+    let pAnimId   = null;
+
+    function launchParticles(x, y) {
+        const emojis = ['🌸','✿','❀','🌺','💮','⭐','✨','💥','🎊','🎉'];
+        const colors = ['#ff4757','#ffd32a','#7bed9f','#70a1ff','#ff6b81','#eccc68','#a29bfe','#fd79a8'];
+
+        for (let i = 0; i < 60; i++) {
+            const angle = (Math.PI * 2 / 60) * i + Math.random() * 0.2;
+            const speed = Math.random() * 12 + 4;
+            particles.push({
+                x, y,
+                vx:    Math.cos(angle) * speed,
+                vy:    Math.sin(angle) * speed - Math.random() * 5,
+                life:  1,
+                decay: Math.random() * 0.02 + 0.015,
+                size:  Math.random() * 16 + 10,
+                emoji: emojis[Math.floor(Math.random() * emojis.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rot:   Math.random() * Math.PI * 2,
+                rotV:  (Math.random() - 0.5) * 0.3,
+            });
+        }
+
+        if (!pAnimId) animParticles();
+    }
+
+    function animParticles() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+        particles = particles.filter(p => p.life > 0);
+
+        particles.forEach(p => {
+            p.x   += p.vx;
+            p.y   += p.vy;
+            p.vy  += 0.4; // 重力
+            p.life -= p.decay;
+            p.rot  += p.rotV;
+
+            pCtx.save();
+            pCtx.globalAlpha = Math.max(0, p.life);
+            pCtx.translate(p.x, p.y);
+            pCtx.rotate(p.rot);
+            pCtx.font = `${p.size}px serif`;
+            pCtx.textAlign = 'center';
+            pCtx.textBaseline = 'middle';
+            pCtx.fillText(p.emoji, 0, 0);
+            pCtx.restore();
+        });
+
+        if (particles.length > 0) {
+            pAnimId = requestAnimationFrame(animParticles);
+        } else {
+            pAnimId = null;
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+        }
+    }
+
+    /* ============================================================
+       登录逻辑
+    ============================================================ */
     window.addEventListener('load', async () => {
-        // 如果已登录直接跳后台
         const sess = sessionStorage.getItem('hc_logged_user');
         if (sess) { window.location.href = 'admin.html'; return; }
-        // 确保管理员账号存在
         await ensureAdminExists();
     });
 
-    /* ---- 登录 ---- */
     async function doLogin() {
         const username = document.getElementById('loginUser').value.trim();
         const password = document.getElementById('loginPass').value;
-        const errEl    = document.getElementById('loginError');
         const btn      = document.getElementById('loginBtn');
 
         if (!username || !password) {
@@ -178,8 +695,16 @@
             return;
         }
 
+        // 按钮旋转动画
+        btn.classList.add('spinning');
         btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div> 验证中...';
+        btn.querySelector('.btn-inner').innerHTML = '<div class="spinner"></div><span>验证中...</span>';
+
+        // 发射粒子
+        const rect = btn.getBoundingClientRect();
+        launchParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+        setTimeout(() => btn.classList.remove('spinning'), 700);
 
         try {
             const user = await verifyLogin(username, password);
@@ -187,19 +712,23 @@
                 sessionStorage.setItem('hc_logged_user', JSON.stringify({
                     _id: user._id,
                     username: user.username,
-                    role: user.role
+                    role: user.role,
                 }));
-                window.location.href = 'admin.html';
+                btn.querySelector('.btn-inner').innerHTML = '🌸 登录成功！';
+                btn.style.background = 'linear-gradient(135deg,#7bed9f,#00b894)';
+                // 再发一波粒子
+                setTimeout(() => launchParticles(rect.left + rect.width / 2, rect.top + rect.height / 2), 200);
+                setTimeout(() => { window.location.href = 'admin.html'; }, 800);
             } else {
                 showLoginError('账号或密码错误，请重试');
                 document.getElementById('loginPass').value = '';
                 btn.disabled = false;
-                btn.innerHTML = '登 录';
+                btn.querySelector('.btn-inner').innerHTML = '<span>🌸</span><span>进入后台</span><span>🌸</span>';
             }
         } catch(e) {
             showLoginError('网络异常，请稍后重试');
             btn.disabled = false;
-            btn.innerHTML = '登 录';
+            btn.querySelector('.btn-inner').innerHTML = '<span>🌸</span><span>进入后台</span><span>🌸</span>';
         }
     }
 
@@ -211,14 +740,12 @@
     }
 
     /* ---- 忘记密码 ---- */
-    // 超级重置码（固定，用于紧急重置，仅你自己知道）
     const SUPER_RESET_CODE = 'hongReset@2024';
 
     function showReset() {
         document.getElementById('loginPanel').style.display = 'none';
         document.getElementById('resetPanel').classList.add('show');
     }
-
     function showLogin() {
         document.getElementById('resetPanel').classList.remove('show');
         document.getElementById('loginPanel').style.display = '';
@@ -234,7 +761,6 @@
             return;
         }
         try {
-            // 找到 admin 账号重置密码
             const admin = await findUser('admin');
             if (admin) {
                 await changePassword(admin._id, 'hongcehua2024');
