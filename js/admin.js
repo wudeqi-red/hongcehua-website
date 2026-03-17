@@ -126,28 +126,63 @@ function showSection(name) {
    ============================================================ */
 function renderDashboard() {
   const pending = adminInquiries.filter(i => i.status === 'pending').length;
-  setText('stat-bloggers',  adminBloggers.length);
-  setText('stat-cases',     adminCases.length);
-  setText('stat-suppliers', adminSuppliers.length);
-  setText('stat-inquiries', pending);
 
+  // 数字先设置，再触发跳动动效
+  const statMap = {
+    'stat-bloggers':  adminBloggers.length,
+    'stat-cases':     adminCases.length,
+    'stat-suppliers': adminSuppliers.length,
+    'stat-inquiries': pending,
+  };
+  Object.entries(statMap).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // 如果全局有动效函数则用它，否则直接设文字
+    if (typeof animateCount === 'function') {
+      el.textContent = '0';
+      setTimeout(() => animateCount(el, val), 200);
+    } else {
+      el.textContent = val;
+    }
+  });
+
+  // 分类图表 - 潮流涂鸦风
   const catMap = {};
   adminBloggers.forEach(b => { catMap[b.category] = (catMap[b.category] || 0) + 1; });
   const sorted = Object.entries(catMap).sort((a,b) => b[1]-a[1]);
   const max = sorted[0]?.[1] || 1;
 
+  const BAR_COLORS = [
+    'linear-gradient(90deg,#ff4757,#ff6b81)',
+    'linear-gradient(90deg,#a55eea,#c79af5)',
+    'linear-gradient(90deg,#1e90ff,#74b9ff)',
+    'linear-gradient(90deg,#2ed573,#7effc0)',
+    'linear-gradient(90deg,#ffd32a,#ffe884)',
+    'linear-gradient(90deg,#ff6b35,#ffa060)',
+  ];
+
   const chart = document.getElementById('categoryChart');
   if (!chart) return;
-  chart.innerHTML = sorted.map(([cat, count]) => `
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:90px; font-size:13px; color:var(--text-sub); text-align:right; flex-shrink:0">${cat}</div>
-      <div style="flex:1; background:rgba(255,255,255,0.05); border-radius:50px; height:10px; overflow:hidden;">
-        <div style="height:100%; width:${(count/max*100).toFixed(1)}%; background:linear-gradient(90deg,#ff4757,#ffa502); border-radius:50px; transition:width 0.8s ease;"></div>
+
+  if (sorted.length === 0) {
+    chart.innerHTML = `<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.2);font-size:14px;">🌸 暂无博主数据</div>`;
+    return;
+  }
+
+  chart.innerHTML = sorted.map(([cat, count], i) => {
+    const pct = (count / max * 100).toFixed(1);
+    const color = BAR_COLORS[i % BAR_COLORS.length];
+    return `
+    <div style="display:flex;align-items:center;gap:14px;padding:6px 0;">
+      <div style="width:82px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-align:right;flex-shrink:0;letter-spacing:0.5px;">${cat || '未分类'}</div>
+      <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:50px;height:12px;overflow:hidden;position:relative;">
+        <div class="chart-bar-inner" style="height:100%;width:${pct}%;background:${color};border-radius:50px;box-shadow:0 0 8px rgba(255,71,87,0.25);animation-delay:${i * 0.08}s;"></div>
       </div>
-      <div style="width:30px; font-size:13px; font-weight:700; color:var(--primary)">${count}</div>
+      <div style="width:26px;font-size:13px;font-weight:900;color:rgba(255,255,255,0.75);text-align:right;">${count}</div>
     </div>
-  `).join('');
+  `}).join('');
 }
+
 
 function setText(id, val) {
   const el = document.getElementById(id);

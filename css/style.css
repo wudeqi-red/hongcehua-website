@@ -29,14 +29,19 @@
     --shadow: 0 4px 24px rgba(0,0,0,0.08);
     --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
 
-    /* 后台深色变量（admin专用，以--admin-前缀区分） */
-    --admin-bg: #0d0d0d;
-    --admin-bg2: #141414;
-    --admin-card: #1e1e1e;
-    --admin-border: rgba(255,255,255,0.08);
+    /* 后台深色变量（涂鸦潮流风） */
+    --admin-bg: #0a0a12;
+    --admin-bg2: #0f0f1a;
+    --admin-card: rgba(20,20,35,0.85);
+    --admin-border: rgba(255,71,87,0.15);
     --admin-text: #ffffff;
-    --admin-text-sub: rgba(255,255,255,0.6);
+    --admin-text-sub: rgba(255,255,255,0.65);
     --admin-text-muted: rgba(255,255,255,0.35);
+    --neon-red: #ff4757;
+    --neon-yellow: #ffd32a;
+    --neon-green: #2ed573;
+    --neon-blue: #1e90ff;
+    --neon-purple: #a55eea;
 }
 
 html { scroll-behavior: smooth; }
@@ -1682,35 +1687,71 @@ body {
 .supplier-contact:hover { background: var(--primary-dark); }
 
 /* ============================
-   后台管理 (深色主题独立)
+   后台管理 - 潮流涂鸦风
    ============================ */
+
+/* 导航栏后台覆盖 */
+.admin-layout ~ * .navbar,
+body:has(.admin-layout) .navbar {
+    background: rgba(10,10,18,0.95) !important;
+    border-bottom: 1px solid rgba(255,71,87,0.2) !important;
+    box-shadow: 0 2px 30px rgba(255,71,87,0.1) !important;
+}
+
 .admin-layout {
     display: flex;
     min-height: 100vh;
     padding-top: 60px;
     background: var(--admin-bg);
+    position: relative;
+}
+
+/* 全局背景涂鸦纹理 */
+.admin-layout::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 600px 400px at 10% 20%, rgba(255,71,87,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 90% 80%, rgba(165,94,234,0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 300px at 50% 50%, rgba(30,144,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .admin-sidebar {
     width: 240px;
-    background: var(--admin-bg2);
-    border-right: 1px solid var(--admin-border);
+    background: rgba(12,12,22,0.97);
+    border-right: 1px solid rgba(255,71,87,0.12);
     padding: 24px 0;
     position: fixed;
     top: 60px;
     bottom: 0;
     overflow-y: auto;
+    z-index: 10;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.4);
+}
+
+/* 侧边栏顶部小红花装饰 */
+.admin-sidebar::before {
+    content: '🌸 ✦ 🌸';
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    padding: 0 0 16px;
+    opacity: 0.4;
+    letter-spacing: 6px;
 }
 
 .sidebar-section { margin-bottom: 8px; }
 
 .sidebar-section-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--admin-text-muted);
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255,71,87,0.5);
     padding: 8px 20px 4px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 
 .sidebar-item {
@@ -1721,27 +1762,49 @@ body {
     color: var(--admin-text-sub);
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
     text-decoration: none;
     border-left: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
+
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(255,71,87,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.sidebar-item:hover::before,
+.sidebar-item.active::before { opacity: 1; }
 
 .sidebar-item:hover,
 .sidebar-item.active {
     color: white;
-    background: rgba(232,0,28,0.08);
-    border-left-color: var(--primary);
+    border-left-color: var(--neon-red);
+    text-shadow: 0 0 8px rgba(255,71,87,0.6);
 }
 
-.sidebar-item i { width: 18px; text-align: center; }
+.sidebar-item.active i {
+    color: var(--neon-red);
+    filter: drop-shadow(0 0 4px rgba(255,71,87,0.8));
+}
+
+.sidebar-item i { width: 18px; text-align: center; transition: all 0.25s; }
+.sidebar-item:hover i { color: var(--neon-red); }
 
 .admin-main {
     flex: 1;
     margin-left: 240px;
     padding: 32px;
-    background: var(--admin-bg);
+    background: transparent;
     min-height: calc(100vh - 60px);
     color: white;
+    position: relative;
+    z-index: 1;
 }
 
 .admin-header {
@@ -1752,9 +1815,22 @@ body {
 }
 
 .admin-header h1 {
-    font-size: 24px;
-    font-weight: 800;
+    font-size: 26px;
+    font-weight: 900;
     color: white;
+    position: relative;
+    display: inline-block;
+}
+
+/* 标题下划线涂鸦效果 */
+.admin-header h1::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-red), var(--neon-yellow), transparent);
+    border-radius: 2px;
 }
 
 .admin-stats-row {
@@ -1764,76 +1840,153 @@ body {
     margin-bottom: 32px;
 }
 
+/* 数据卡片 - 潮流涂鸦风 */
 .admin-stat-card {
-    background: var(--admin-card);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--radius);
-    padding: 24px;
+    background: rgba(20,20,35,0.7);
+    border: 1px solid rgba(255,71,87,0.12);
+    border-radius: 18px;
+    padding: 22px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    transition: all 0.3s;
+    cursor: default;
 }
 
+.admin-stat-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    opacity: 0.06;
+    transition: opacity 0.3s;
+}
+
+.admin-stat-card:nth-child(1)::before { background: var(--neon-red); }
+.admin-stat-card:nth-child(2)::before { background: var(--neon-purple); }
+.admin-stat-card:nth-child(3)::before { background: var(--neon-green); }
+.admin-stat-card:nth-child(4)::before { background: var(--neon-yellow); }
+
+.admin-stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,71,87,0.3);
+    box-shadow: 0 12px 40px rgba(255,71,87,0.12);
+}
+.admin-stat-card:hover::before { opacity: 0.12; }
+
+/* 顶部彩色边线 */
+.admin-stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+}
+.admin-stat-card:nth-child(1)::after { background: linear-gradient(90deg, var(--neon-red), transparent); }
+.admin-stat-card:nth-child(2)::after { background: linear-gradient(90deg, var(--neon-purple), transparent); }
+.admin-stat-card:nth-child(3)::after { background: linear-gradient(90deg, var(--neon-green), transparent); }
+.admin-stat-card:nth-child(4)::after { background: linear-gradient(90deg, var(--neon-yellow), transparent); }
+
 .admin-stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
     flex-shrink: 0;
+    position: relative;
 }
 
 .admin-stat-num {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 900;
     color: white;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 .admin-stat-label {
     font-size: 12px;
     color: var(--admin-text-muted);
-    margin-top: 2px;
+    margin-top: 4px;
+    font-weight: 500;
 }
 
+/* 数据卡片下方涂鸦小字 */
+.admin-stat-card .stat-tag {
+    font-size: 10px;
+    color: rgba(255,71,87,0.5);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* 表格卡片 */
 .admin-table-card {
-    background: var(--admin-card);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--radius);
+    background: rgba(15,15,28,0.75);
+    border: 1px solid rgba(255,71,87,0.1);
+    border-radius: 20px;
     overflow: hidden;
     margin-bottom: 24px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    transition: border-color 0.3s;
+}
+
+.admin-table-card:hover {
+    border-color: rgba(255,71,87,0.2);
 }
 
 .table-header {
     padding: 20px 24px;
-    border-bottom: 1px solid var(--admin-border);
+    border-bottom: 1px solid rgba(255,71,87,0.08);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+    background: rgba(255,71,87,0.03);
 }
 
-.table-header h3 { font-size: 16px; font-weight: 700; color: white; }
+.table-header h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-header h3::before {
+    content: '🌸';
+    font-size: 14px;
+}
 
 .btn-add {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--neon-red), #ff6b35);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 8px 18px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     font-family: inherit;
-    transition: all 0.2s;
+    transition: all 0.25s;
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 4px 15px rgba(255,71,87,0.3);
 }
 
-.btn-add:hover { opacity: 0.85; }
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,71,87,0.4);
+}
 
 table {
     width: 100%;
@@ -1844,22 +1997,25 @@ th, td {
     text-align: left;
     padding: 14px 20px;
     font-size: 13px;
-    border-bottom: 1px solid var(--admin-border);
+    border-bottom: 1px solid rgba(255,71,87,0.06);
 }
 
 th {
-    color: var(--admin-text-muted);
-    font-weight: 600;
-    font-size: 12px;
+    color: rgba(255,71,87,0.6);
+    font-weight: 700;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: rgba(255,255,255,0.02);
+    letter-spacing: 1px;
+    background: rgba(255,71,87,0.03);
 }
 
 td { color: var(--admin-text-sub); }
 
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(255,255,255,0.02); }
+tr:hover td {
+    background: rgba(255,71,87,0.04);
+    color: rgba(255,255,255,0.85);
+}
 
 .table-avatar {
     width: 32px;
@@ -1873,23 +2029,27 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     color: white;
     margin-right: 8px;
     vertical-align: middle;
+    border: 1px solid rgba(255,71,87,0.2);
 }
 
 .status-badge {
     padding: 3px 10px;
-    border-radius: 4px;
+    border-radius: 20px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .status-active {
-    background: rgba(34,197,94,0.15);
-    color: #22c55e;
+    background: rgba(46,213,115,0.12);
+    color: var(--neon-green);
+    border: 1px solid rgba(46,213,115,0.2);
 }
 
 .status-pending {
-    background: rgba(255,165,2,0.15);
-    color: #ffa502;
+    background: rgba(255,211,42,0.12);
+    color: var(--neon-yellow);
+    border: 1px solid rgba(255,211,42,0.2);
 }
 
 .table-actions {
@@ -1899,7 +2059,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
 .btn-edit, .btn-delete {
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 5px 12px;
     font-size: 12px;
     cursor: pointer;
@@ -1909,20 +2069,31 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 
 .btn-edit {
-    background: rgba(255,255,255,0.08);
-    color: white;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .btn-delete {
-    background: rgba(232,0,28,0.12);
-    color: var(--primary);
+    background: rgba(255,71,87,0.1);
+    color: var(--neon-red);
+    border: 1px solid rgba(255,71,87,0.15);
 }
 
-.btn-edit:hover { background: rgba(255,255,255,0.15); }
-.btn-delete:hover { background: var(--primary); color: white; }
+.btn-edit:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    transform: translateY(-1px);
+}
+.btn-delete:hover {
+    background: var(--neon-red);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255,71,87,0.4);
+}
 
 /* ============================
-   弹窗 (后台使用)
+   弹窗 (后台使用) - 涂鸦潮流风
    ============================ */
 .modal-overlay {
     position: fixed;
@@ -1930,8 +2101,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(12px);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -1947,24 +2118,36 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 
 .modal, .modal-box {
-    background: var(--admin-card);
-    border: 1px solid var(--admin-border);
-    border-radius: 20px;
+    background: rgba(14,14,26,0.96);
+    border: 1px solid rgba(255,71,87,0.2);
+    border-radius: 22px;
     padding: 32px;
     width: 90%;
     max-width: 560px;
     max-height: 85vh;
     overflow-y: auto;
-    transform: translateY(20px);
-    transition: transform 0.3s;
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
     color: white;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,71,87,0.05) inset;
+    position: relative;
+}
+
+/* 弹窗顶部彩色渐变线 */
+.modal::before, .modal-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20px; right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-red), var(--neon-yellow), var(--neon-purple), transparent);
+    border-radius: 2px;
 }
 
 .modal-box { max-width: 420px; }
 
 .modal-overlay.active .modal,
 .modal-overlay.active .modal-box {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .modal-header {
@@ -1974,24 +2157,32 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     margin-bottom: 24px;
 }
 
-.modal-header h3 { font-size: 18px; font-weight: 700; color: white; }
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+}
 
 .modal-close {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    background: rgba(255,71,87,0.1);
+    border: 1px solid rgba(255,71,87,0.2);
+    color: rgba(255,255,255,0.7);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
-.modal-close:hover { background: rgba(232,0,28,0.3); }
+.modal-close:hover {
+    background: rgba(255,71,87,0.25);
+    color: white;
+    transform: rotate(90deg);
+}
 
 .modal-form {
     display: flex;
