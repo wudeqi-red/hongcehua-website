@@ -153,12 +153,12 @@ function renderDashboard() {
   const max = sorted[0]?.[1] || 1;
 
   const BAR_COLORS = [
-    'linear-gradient(90deg,#ff4757,#ff6b81)',
-    'linear-gradient(90deg,#a55eea,#c79af5)',
-    'linear-gradient(90deg,#1e90ff,#74b9ff)',
-    'linear-gradient(90deg,#2ed573,#7effc0)',
-    'linear-gradient(90deg,#ffd32a,#ffe884)',
-    'linear-gradient(90deg,#ff6b35,#ffa060)',
+    { grad: 'linear-gradient(90deg,#00eeff,#0099cc)', glow: 'rgba(0,238,255,0.35)' },
+    { grad: 'linear-gradient(90deg,#a855f7,#7c3aed)', glow: 'rgba(168,85,247,0.35)' },
+    { grad: 'linear-gradient(90deg,#00ff66,#00cc52)', glow: 'rgba(0,255,102,0.35)' },
+    { grad: 'linear-gradient(90deg,#ffaa00,#ff7700)', glow: 'rgba(255,170,0,0.35)'  },
+    { grad: 'linear-gradient(90deg,#ff4757,#cc2233)', glow: 'rgba(255,71,87,0.35)'  },
+    { grad: 'linear-gradient(90deg,#ff00ff,#cc00cc)', glow: 'rgba(255,0,255,0.35)'  },
   ];
 
   const chart = document.getElementById('categoryChart');
@@ -171,14 +171,14 @@ function renderDashboard() {
 
   chart.innerHTML = sorted.map(([cat, count], i) => {
     const pct = (count / max * 100).toFixed(1);
-    const color = BAR_COLORS[i % BAR_COLORS.length];
+    const c = BAR_COLORS[i % BAR_COLORS.length];
     return `
-    <div style="display:flex;align-items:center;gap:14px;padding:6px 0;">
-      <div style="width:82px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-align:right;flex-shrink:0;letter-spacing:0.5px;">${cat || '未分类'}</div>
-      <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:50px;height:12px;overflow:hidden;position:relative;">
-        <div class="chart-bar-inner" style="height:100%;width:${pct}%;background:${color};border-radius:50px;box-shadow:0 0 8px rgba(255,71,87,0.25);animation-delay:${i * 0.08}s;"></div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:76px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.4);text-align:right;flex-shrink:0;letter-spacing:0.3px;">${cat || '未分类'}</div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border-radius:50px;height:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.04);">
+        <div class="chart-bar-inner" style="height:100%;width:${pct}%;background:${c.grad};border-radius:50px;box-shadow:0 0 8px ${c.glow};animation-delay:${i * 0.07}s;"></div>
       </div>
-      <div style="width:26px;font-size:13px;font-weight:900;color:rgba(255,255,255,0.75);text-align:right;">${count}</div>
+      <div style="width:22px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);text-align:right;">${count}</div>
     </div>
   `}).join('');
 }

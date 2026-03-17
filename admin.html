@@ -8,26 +8,27 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar scrolled" style="background:rgba(8,8,16,0.97)!important;border-bottom:1px solid rgba(255,71,87,0.18)!important;box-shadow:0 2px 30px rgba(255,71,87,0.08)!important;">
+    <nav class="navbar scrolled" style="background:rgba(10,10,14,0.97)!important;border-bottom:1px solid rgba(255,255,255,0.06)!important;box-shadow:0 1px 0 rgba(0,238,255,0.06)!important;">
         <div class="nav-container">
             <div class="nav-logo" onclick="location.href='index.html'" style="cursor:pointer;">
-                <span class="logo-icon" style="filter:drop-shadow(0 0 6px rgba(255,71,87,0.7));">🌸</span>
-                <span class="logo-text" style="color:white;">红<span class="logo-sub" style="color:#ff4757;">策划</span> <span style="font-size:11px;color:rgba(255,71,87,0.5);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-left:4px;">ADMIN</span></span>
+                <span class="logo-icon" style="font-size:18px;">🔴</span>
+                <span class="logo-text" style="color:white;font-weight:700;">红<span class="logo-sub" style="color:#ff4757;">策划</span></span>
+                <span style="font-size:11px;color:rgba(0,238,255,0.5);font-weight:700;letter-spacing:2px;margin-left:8px;padding:2px 8px;border:1px solid rgba(0,238,255,0.15);border-radius:4px;">ADMIN</span>
             </div>
             <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
-                <a href="index.html" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">← 返回前台</a>
-                <button onclick="showSection('settings')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-radius:10px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,71,87,0.4)';this.style.color='white'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.6)'">⚙️ 设置</button>
-                <button onclick="adminLogout()" style="background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.25);color:#ff4757;border-radius:10px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,71,87,0.2)'" onmouseout="this.style.background='rgba(255,71,87,0.1)'">退出</button>
-                <div style="display:flex;align-items:center;gap:8px;background:rgba(255,71,87,0.07);border:1px solid rgba(255,71,87,0.18);border-radius:20px;padding:4px 14px 4px 4px;">
-                    <div style="width:28px;height:28px;background:linear-gradient(135deg,#ff4757,#a55eea);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 8px rgba(255,71,87,0.4);">🌸</div>
-                    <span id="navUserName" style="font-size:13px;color:rgba(255,255,255,0.7);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">管理员</span>
+                <a href="index.html" style="color:rgba(255,255,255,0.35);text-decoration:none;font-size:13px;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">← 返回前台</a>
+                <button onclick="showSection('settings')" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,238,255,0.25)';this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.5)'">⚙️ 设置</button>
+                <button onclick="adminLogout()" style="background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.18);color:rgba(255,71,87,0.8);border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,71,87,0.15)'" onmouseout="this.style.background='rgba(255,71,87,0.08)'">退出</button>
+                <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:4px 14px 4px 4px;">
+                    <div style="width:26px;height:26px;background:linear-gradient(135deg,#ff4757,#a855f7);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;">管</div>
+                    <span id="navUserName" style="font-size:13px;color:rgba(255,255,255,0.55);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">管理员</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 全局涂鸦背景 Canvas -->
-    <canvas id="adminBgCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.35;"></canvas>
+    <!-- 深空粒子背景 Canvas -->
+    <canvas id="adminBgCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:1;"></canvas>
 
     <div class="admin-layout">
         <!-- 侧边栏 -->
@@ -76,53 +77,50 @@
             <div id="section-dashboard" class="admin-section">
                 <div class="admin-header">
                     <div>
-                        <h1 style="display:flex;align-items:center;gap:10px;">
-                            <span style="font-size:28px;filter:drop-shadow(0 0 8px rgba(255,71,87,0.8));">🌸</span>
-                            数据概览
-                        </h1>
-                        <p style="color:rgba(255,71,87,0.5);font-size:12px;margin-top:6px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">DASHBOARD · 实时数据</p>
+                        <h1>数据概览</h1>
+                        <p style="color:rgba(255,255,255,0.25);font-size:11px;margin-top:4px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;">Dashboard · Overview</p>
                     </div>
-                    <div style="display:flex;align-items:center;gap:8px;background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.15);border-radius:12px;padding:8px 16px;">
-                        <span style="width:8px;height:8px;background:#2ed573;border-radius:50%;display:inline-block;box-shadow:0 0 8px #2ed573;animation:pulse-dot 2s infinite;"></span>
-                        <span style="color:rgba(255,255,255,0.5);font-size:12px;" id="dashboardUpdateTime">实时更新</span>
+                    <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 14px;">
+                        <span style="width:6px;height:6px;background:#00ff66;border-radius:50%;display:inline-block;box-shadow:0 0 6px #00ff66;animation:pulse-dot 2s infinite;"></span>
+                        <span style="color:rgba(255,255,255,0.35);font-size:12px;" id="dashboardUpdateTime">实时更新</span>
                     </div>
                 </div>
 
-                <!-- 数据卡片 -->
+                <!-- 统计卡片 -->
                 <div class="admin-stats-row">
                     <div class="admin-stat-card">
-                        <div class="admin-stat-icon" style="background:rgba(255,71,87,0.12);box-shadow:0 0 20px rgba(255,71,87,0.15);">
-                            <span style="font-size:26px;filter:drop-shadow(0 0 4px rgba(255,71,87,0.6));">👤</span>
+                        <div class="admin-stat-icon" style="background:rgba(0,238,255,0.08);">
+                            <i class="fas fa-users" style="color:rgba(0,238,255,0.8);font-size:18px;"></i>
                         </div>
                         <div>
-                            <div class="admin-stat-num" id="stat-bloggers" style="background:linear-gradient(135deg,#fff,#ff8f9f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div>
+                            <div class="admin-stat-num" id="stat-bloggers">0</div>
                             <div class="admin-stat-label">博主总数</div>
                         </div>
                     </div>
                     <div class="admin-stat-card">
-                        <div class="admin-stat-icon" style="background:rgba(165,94,234,0.12);box-shadow:0 0 20px rgba(165,94,234,0.15);">
-                            <span style="font-size:26px;filter:drop-shadow(0 0 4px rgba(165,94,234,0.6));">📁</span>
+                        <div class="admin-stat-icon" style="background:rgba(168,85,247,0.08);">
+                            <i class="fas fa-briefcase" style="color:rgba(168,85,247,0.8);font-size:18px;"></i>
                         </div>
                         <div>
-                            <div class="admin-stat-num" id="stat-cases" style="background:linear-gradient(135deg,#fff,#c79af5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div>
+                            <div class="admin-stat-num" id="stat-cases">0</div>
                             <div class="admin-stat-label">案例总数</div>
                         </div>
                     </div>
                     <div class="admin-stat-card">
-                        <div class="admin-stat-icon" style="background:rgba(46,213,115,0.12);box-shadow:0 0 20px rgba(46,213,115,0.15);">
-                            <span style="font-size:26px;filter:drop-shadow(0 0 4px rgba(46,213,115,0.6));">🏢</span>
+                        <div class="admin-stat-icon" style="background:rgba(0,255,102,0.08);">
+                            <i class="fas fa-building" style="color:rgba(0,255,102,0.8);font-size:18px;"></i>
                         </div>
                         <div>
-                            <div class="admin-stat-num" id="stat-suppliers" style="background:linear-gradient(135deg,#fff,#7effc0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div>
+                            <div class="admin-stat-num" id="stat-suppliers">0</div>
                             <div class="admin-stat-label">供应商数</div>
                         </div>
                     </div>
                     <div class="admin-stat-card">
-                        <div class="admin-stat-icon" style="background:rgba(255,211,42,0.12);box-shadow:0 0 20px rgba(255,211,42,0.15);">
-                            <span style="font-size:26px;filter:drop-shadow(0 0 4px rgba(255,211,42,0.6));">📩</span>
+                        <div class="admin-stat-icon" style="background:rgba(255,170,0,0.08);">
+                            <i class="fas fa-envelope" style="color:rgba(255,170,0,0.8);font-size:18px;"></i>
                         </div>
                         <div>
-                            <div class="admin-stat-num" id="stat-inquiries" style="background:linear-gradient(135deg,#fff,#ffe884);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div>
+                            <div class="admin-stat-num" id="stat-inquiries">0</div>
                             <div class="admin-stat-label">待处理询盘</div>
                         </div>
                     </div>
@@ -131,16 +129,13 @@
                 <!-- 博主分类分布 -->
                 <div class="admin-table-card">
                     <div class="table-header">
-                        <h3 style="color:white;">博主分类分布</h3>
-                        <span style="font-size:11px;color:rgba(255,71,87,0.5);font-weight:700;letter-spacing:1px;">CATEGORY CHART</span>
+                        <h3 style="color:rgba(255,255,255,0.8);font-size:14px;font-weight:600;letter-spacing:0.3px;">博主分类分布</h3>
+                        <span style="font-size:10px;color:rgba(255,255,255,0.2);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;">Category Distribution</span>
                     </div>
-                    <div style="padding:28px;">
-                        <div id="categoryChart" style="display:flex; flex-direction:column; gap:14px;"></div>
+                    <div style="padding:24px;">
+                        <div id="categoryChart" style="display:flex;flex-direction:column;gap:12px;"></div>
                     </div>
                 </div>
-
-                <!-- 浮动花朵装饰（仅仪表盘） -->
-                <div id="dashboardFloatingFlowers" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;"></div>
             </div>
 
             <!-- 博主管理 -->
@@ -867,181 +862,144 @@
 
     <script>
     /* ============================================================
-       后台涂鸦背景 + 动效
+       后台赛博深空动效
        ============================================================ */
 
-    // ---- 1. 涂鸦背景 Canvas ----
+    // ---- 1. 深空粒子背景 ----
     (function initAdminCanvas() {
       const canvas = document.getElementById('adminBgCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; draw(); }
 
-      const COLORS = ['#ff4757','#a55eea','#1e90ff','#ffd32a','#2ed573','#ff6b81'];
+      let W, H, particles = [];
 
-      function rand(min, max) { return Math.random() * (max - min) + min; }
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function createParticles() {
+        particles = [];
+        const count = Math.floor(W * H / 18000);
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: Math.random() * 1.2 + 0.2,
+            alpha: Math.random() * 0.4 + 0.05,
+            speed: Math.random() * 0.15 + 0.03,
+            drift: (Math.random() - 0.5) * 0.08,
+          });
+        }
+      }
 
       function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, W, H);
 
-        // 涂鸦曲线
-        for (let i = 0; i < 14; i++) {
+        // 微弱径向渐变氛围
+        const g1 = ctx.createRadialGradient(W*0.15, H*0.2, 0, W*0.15, H*0.2, W*0.45);
+        g1.addColorStop(0, 'rgba(0,238,255,0.025)');
+        g1.addColorStop(1, 'transparent');
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, W, H);
+
+        const g2 = ctx.createRadialGradient(W*0.85, H*0.85, 0, W*0.85, H*0.85, W*0.4);
+        g2.addColorStop(0, 'rgba(168,85,247,0.025)');
+        g2.addColorStop(1, 'transparent');
+        ctx.fillStyle = g2;
+        ctx.fillRect(0, 0, W, H);
+
+        // 星点
+        particles.forEach(p => {
           ctx.beginPath();
-          ctx.strokeStyle = COLORS[i % COLORS.length];
-          ctx.globalAlpha = rand(0.03, 0.09);
-          ctx.lineWidth = rand(1, 3);
-          ctx.moveTo(rand(0, canvas.width), rand(0, canvas.height));
-          for (let j = 0; j < 4; j++) {
-            ctx.bezierCurveTo(
-              rand(0, canvas.width), rand(0, canvas.height),
-              rand(0, canvas.width), rand(0, canvas.height),
-              rand(0, canvas.width), rand(0, canvas.height)
-            );
-          }
-          ctx.stroke();
-        }
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+          ctx.fill();
 
-        // 散落小花
-        const flowers = ['✿','❀','✾','🌸'];
-        for (let i = 0; i < 20; i++) {
-          ctx.globalAlpha = rand(0.04, 0.12);
-          ctx.font = `${rand(12, 28)}px serif`;
-          ctx.fillText(flowers[Math.floor(Math.random() * flowers.length)],
-            rand(0, canvas.width), rand(0, canvas.height));
-        }
+          p.y -= p.speed;
+          p.x += p.drift;
+          if (p.y < -2) { p.y = H + 2; p.x = Math.random() * W; }
+          if (p.x < -2 || p.x > W + 2) p.x = Math.random() * W;
+        });
 
-        // 涂鸦文字
-        const tags = ['RED✦','CLAW★','创意✿','潮流♠','策划◆'];
-        ctx.font = 'bold 16px sans-serif';
-        for (let i = 0; i < 6; i++) {
-          ctx.globalAlpha = rand(0.03, 0.07);
-          ctx.fillStyle = COLORS[i % COLORS.length];
-          ctx.save();
-          ctx.translate(rand(100, canvas.width - 100), rand(100, canvas.height - 100));
-          ctx.rotate(rand(-0.5, 0.5));
-          ctx.fillText(tags[i % tags.length], 0, 0);
-          ctx.restore();
-        }
-
-        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
       }
 
-      window.addEventListener('resize', resize);
+      window.addEventListener('resize', () => { resize(); createParticles(); });
       resize();
+      createParticles();
+      draw();
     })();
 
-    // ---- 2. 浮动花朵（仅仪表盘显示时） ----
-    let _flowerTimer = null;
-    function startDashboardFlowers() {
-      const container = document.getElementById('dashboardFloatingFlowers');
-      if (!container) return;
-      container.style.display = 'block';
-      _flowerTimer = setInterval(() => {
-        const el = document.createElement('span');
-        const emojis = ['🌸','✿','❀','🌺','✦','★','♠'];
-        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        const size = Math.random() * 18 + 10;
-        el.style.cssText = `
-          position:absolute;
-          left:${Math.random() * 100}%;
-          bottom:-40px;
-          font-size:${size}px;
-          opacity:${Math.random() * 0.4 + 0.1};
-          animation: floatUp ${Math.random() * 6 + 5}s linear forwards;
-          pointer-events:none;
-        `;
-        container.appendChild(el);
-        setTimeout(() => el.remove(), 12000);
-      }, 600);
-    }
-
-    function stopDashboardFlowers() {
-      clearInterval(_flowerTimer);
-      const container = document.getElementById('dashboardFloatingFlowers');
-      if (container) container.style.display = 'none';
-    }
-
-    // 注入 floatUp keyframe
+    // ---- 2. 注入关键帧 + 动效样式 ----
     const styleEl = document.createElement('style');
     styleEl.textContent = `
-      @keyframes floatUp {
-        0%   { transform: translateY(0) rotate(0deg);   opacity: var(--fo, 0.2); }
-        100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
-      }
       @keyframes pulse-dot {
-        0%, 100% { box-shadow: 0 0 4px #2ed573; }
-        50%       { box-shadow: 0 0 12px #2ed573, 0 0 20px rgba(46,213,115,0.4); }
+        0%, 100% { box-shadow: 0 0 3px #00ff66; opacity:1; }
+        50%       { box-shadow: 0 0 10px #00ff66, 0 0 20px rgba(0,255,102,0.3); opacity:0.7; }
       }
-      /* 数字卡片进场动画 */
       @keyframes cardIn {
-        from { opacity:0; transform: translateY(20px) scale(0.95); }
-        to   { opacity:1; transform: translateY(0) scale(1); }
+        from { opacity:0; transform: translateY(12px); }
+        to   { opacity:1; transform: translateY(0); }
       }
-      .admin-stat-card { animation: cardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
-      .admin-stat-card:nth-child(1) { animation-delay: 0.05s; }
-      .admin-stat-card:nth-child(2) { animation-delay: 0.12s; }
-      .admin-stat-card:nth-child(3) { animation-delay: 0.19s; }
-      .admin-stat-card:nth-child(4) { animation-delay: 0.26s; }
+      .admin-stat-card { animation: cardIn 0.4s ease both; }
+      .admin-stat-card:nth-child(1) { animation-delay: 0.04s; }
+      .admin-stat-card:nth-child(2) { animation-delay: 0.10s; }
+      .admin-stat-card:nth-child(3) { animation-delay: 0.16s; }
+      .admin-stat-card:nth-child(4) { animation-delay: 0.22s; }
 
-      /* 分类图表条形动画 */
-      .chart-bar-inner { animation: barGrow 0.8s cubic-bezier(0.34,1.56,0.64,1) both; }
       @keyframes barGrow {
         from { width: 0 !important; }
       }
+      .chart-bar-inner {
+        animation: barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both;
+      }
 
-      /* 数字跳动计数 */
-      .admin-stat-num { transition: none; }
-
-      /* 侧边栏激活项目辉光 */
-      .sidebar-item.active {
-        box-shadow: inset 3px 0 0 var(--neon-red), 4px 0 12px rgba(255,71,87,0.2);
+      /* 表单输入框科技感 */
+      .form-field input:focus,
+      .form-field select:focus,
+      .form-field textarea:focus {
+        border-color: rgba(0,238,255,0.35) !important;
+        box-shadow: 0 0 0 3px rgba(0,238,255,0.06) !important;
+        outline: none;
       }
     `;
     document.head.appendChild(styleEl);
 
-    // ---- 3. 数字跳动计数动效 ----
+    // ---- 3. 数字计数动效 ----
     function animateCount(el, target) {
       const num = parseInt(target) || 0;
-      if (num === 0) return;
+      if (num === 0) { el.textContent = '0'; return; }
       let start = 0;
-      const duration = 800;
-      const step = Math.ceil(num / (duration / 16));
+      const step = Math.max(1, Math.ceil(num / 40));
       const timer = setInterval(() => {
         start = Math.min(start + step, num);
         el.textContent = start;
         if (start >= num) clearInterval(timer);
-      }, 16);
+      }, 20);
     }
 
-    // 监听 showSection，自动开关花朵 + 触发数字动效
+    // ---- 4. 切换 section 时触发动效 ----
     const _origShowSection = window.showSection;
     window.showSection = function(name) {
       if (typeof _origShowSection === 'function') _origShowSection(name);
       if (name === 'dashboard') {
-        startDashboardFlowers();
         setTimeout(() => {
           ['stat-bloggers','stat-cases','stat-suppliers','stat-inquiries'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) animateCount(el, el.textContent);
+            if (el && el.textContent !== '0') animateCount(el, el.textContent);
           });
-        }, 300);
-      } else {
-        stopDashboardFlowers();
+        }, 200);
       }
     };
 
-    // 页面初始加载也触发
+    // ---- 5. 页面首次加载 ----
     document.addEventListener('DOMContentLoaded', () => {
-      const dash = document.getElementById('section-dashboard');
-      if (dash && dash.style.display !== 'none') {
-        startDashboardFlowers();
-        // 更新时间
-        const t = document.getElementById('dashboardUpdateTime');
-        if (t) {
-          const now = new Date();
-          t.textContent = now.toLocaleDateString('zh-CN') + ' ' +
-            now.toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' });
-        }
+      const t = document.getElementById('dashboardUpdateTime');
+      if (t) {
+        const now = new Date();
+        t.textContent = now.toLocaleDateString('zh-CN') + ' ' +
+          now.toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' });
       }
     });
     </script>
