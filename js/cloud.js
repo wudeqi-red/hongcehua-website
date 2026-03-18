@@ -12,14 +12,17 @@ let _db  = null;
 async function initCloud() {
   if (_app) return _app;
   _app = cloudbase.init({ env: ENV_ID, region: 'ap-shanghai' });
-  // 匿名登录（新版SDK写法）
+  // 匿名登录（新版SDK写法）- 如果失败不影响数据库操作
   try {
     const auth = _app.auth({ persistence: 'local' });
     const loginState = await auth.getLoginState();
     if (!loginState) {
       await auth.signInAnonymously();
     }
-  } catch(e) { console.warn('匿名登录失败', e); }
+  } catch(e) {
+    console.warn('匿名登录失败（不影响登录功能）', e);
+    // 继续初始化数据库，不抛出错误
+  }
   _db = _app.database();
   return _app;
 }
