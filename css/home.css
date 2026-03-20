@@ -1910,6 +1910,17 @@
     font-size: 18px;
 }
 
+.quote-notice {
+    font-size: 13px;
+    color: #ff6b6b;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid #ff6b6b;
+}
+
 .quote-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

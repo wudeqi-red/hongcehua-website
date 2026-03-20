@@ -128,10 +128,6 @@
                         <i class="fas fa-video"></i>
                         抖音
                     </button>
-                    <button class="platform-tab" data-platform="both">
-                        <i class="fas fa-layer-group"></i>
-                        小红书 + 抖音
-                    </button>
                 </div>
             </div>
 
@@ -724,84 +720,6 @@
                     adBudget: 20000,
                     services: ['策略拉起', '媒介执行', '整合复盘']
                 }
-            },
-            both: {
-                name: '小红书 + 抖音',
-                icon: 'fas fa-layer-group',
-                // 1w：小红书1w + 抖音1w
-                base: {
-                    budget: 10000,
-                    xiaohongshu: {
-                        budget: 5000,
-                        influencers: [
-                            { type: '头部流量KOL', count: 2, price: 1500, desc: '搭建消费场景，强势打入用户群体' },
-                            { type: '万粉KOC', count: 8, price: 200, desc: '原创图文-种草向' },
-                            { type: '千粉KOC', count: 7, price: 135, desc: '原创图文-种草向' }
-                        ],
-                        dianping: { count: 16, desc: '探店达人同步分发' }
-                    },
-                    douyin: {
-                        budget: 5000,
-                        influencers: [
-                            { type: '优质品宣博主', count: 1, price: 1600, desc: '扩散用户对品牌的认知度' },
-                            { type: 'LV6', count: 2, price: 400, desc: '原创视频-转化向' },
-                            { type: 'LV5', count: 5, price: 200, desc: '原创视频-转化向' },
-                            { type: 'LV4', count: 5, price: 80, desc: '原创视频-转化向' }
-                        ],
-                        adBudget: 1000
-                    },
-                    services: ['策略拉起', '媒介执行', '整合复盘']
-                },
-                // 5w：小红书2.5w + 抖音2.5w
-                mid: {
-                    budget: 50000,
-                    xiaohongshu: {
-                        budget: 25000,
-                        influencers: [
-                            { type: '优质蒲公英博主', count: 5, price: 2000, desc: '以商业流量进入城市市场' },
-                            { type: '头部流量KOL', count: 3, price: 2500, desc: '搭建消费场景' },
-                            { type: '万粉KOC', count: 8, price: 333, desc: '原创图文-种草向' },
-                            { type: '千粉KOC', count: 10, price: 0, desc: '原创图文-种草向' }
-                        ],
-                        dianping: { count: 26, desc: '探店达人同步分发' }
-                    },
-                    douyin: {
-                        budget: 25000,
-                        influencers: [
-                            { type: '优质品宣博主', count: 5, price: 1600, desc: '扩散用户对品牌的认知度' },
-                            { type: 'LV6', count: 12, price: 400, desc: '原创视频-转化向' },
-                            { type: 'LV5', count: 25, price: 200, desc: '原创视频-转化向' },
-                            { type: 'LV4', count: 25, price: 80, desc: '原创视频-转化向' }
-                        ],
-                        adBudget: 5000
-                    },
-                    services: ['策略拉起', '媒介执行', '整合复盘']
-                },
-                // 10w：小红书5w + 抖音5w
-                high: {
-                    budget: 100000,
-                    xiaohongshu: {
-                        budget: 50000,
-                        influencers: [
-                            { type: '优质蒲公英博主', count: 10, price: 2000, desc: '以商业流量进入城市市场' },
-                            { type: '头部流量KOL', count: 6, price: 2500, desc: '搭建消费场景' },
-                            { type: '万粉KOC', count: 15, price: 333, desc: '原创图文-种草向' },
-                            { type: '千粉KOC', count: 20, price: 0, desc: '原创图文-种草向' }
-                        ],
-                        dianping: { count: 51, desc: '探店达人同步分发' }
-                    },
-                    douyin: {
-                        budget: 50000,
-                        influencers: [
-                            { type: '优质品宣博主', count: 10, price: 1600, desc: '扩散用户对品牌的认知度' },
-                            { type: 'LV6', count: 25, price: 400, desc: '原创视频-转化向' },
-                            { type: 'LV5', count: 50, price: 200, desc: '原创视频-转化向' },
-                            { type: 'LV4', count: 50, price: 80, desc: '原创视频-转化向' }
-                        ],
-                        adBudget: 10000
-                    },
-                    services: ['策略拉起', '媒介执行', '整合复盘']
-                }
             }
         };
 
@@ -869,13 +787,7 @@
             let totalBudget = 0;
 
             // 生成报价HTML
-            if (currentPlatform === 'both') {
-                // 双平台
-                quoteHtml = generateBothPlatformQuote(config, factor);
-            } else {
-                // 单平台
-                quoteHtml = generateSinglePlatformQuote(currentPlatform, config, factor);
-            }
+            quoteHtml = generateSinglePlatformQuote(currentPlatform, config, factor);
 
             // 显示结果
             document.getElementById('quoteResult').innerHTML = quoteHtml;
@@ -937,6 +849,7 @@
                 <h4>💬 获取完整方案</h4>
                 <p>填写联系方式，专业顾问24小时内联系您</p>
                 <p class="quote-wechat"><i class="fab fa-weixin"></i> 微信：superxhh1</p>
+                <p class="quote-notice">⚠️ 报价以实际沟通为主，智能报价仅供参考</p>
                 <form class="quote-form" onsubmit="submitQuoteForm(event, '${platform}', ${currentBudget})">
                     <input type="text" class="qf-input" placeholder="您的姓名" required>
                     <input type="tel" class="qf-input" placeholder="联系电话" required>
