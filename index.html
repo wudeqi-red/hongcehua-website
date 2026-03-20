@@ -891,7 +891,7 @@
 
             html += `<div class="quote-header-row">
                 <h3><i class="${QUOTE_CONFIG[platform].icon}"></i> ${QUOTE_CONFIG[platform].name}推广方案</h3>
-                <div class="quote-budget">预算：¥${currentBudget.toLocaleString()}</div>
+                <div class="quote-budget">总预算：¥${currentBudget.toLocaleString()}</div>
             </div>`;
 
             // 达人矩阵
@@ -912,7 +912,7 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">${cost > 0 ? '¥' + cost.toLocaleString() : '赠送'}</div>
+                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
 
@@ -957,6 +957,7 @@
             html += `<div class="quote-contact">
                 <h4>💬 获取完整方案</h4>
                 <p>填写联系方式，专业顾问24小时内联系您</p>
+                <p class="quote-wechat"><i class="fab fa-weixin"></i> 微信：superxhh1</p>
                 <form class="quote-form" onsubmit="submitQuoteForm(event, '${platform}', ${currentBudget})">
                     <input type="text" class="qf-input" placeholder="您的姓名" required>
                     <input type="tel" class="qf-input" placeholder="联系电话" required>
@@ -1006,7 +1007,7 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">达人投放</div>
+                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
 
@@ -1036,7 +1037,7 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">达人投放</div>
+                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
 
@@ -1065,6 +1066,7 @@
             html += `<div class="quote-contact">
                 <h4>💬 获取完整方案</h4>
                 <p>填写联系方式，专业顾问24小时内联系您</p>
+                <p class="quote-wechat"><i class="fab fa-weixin"></i> 微信：superxhh1</p>
                 <form class="quote-form" onsubmit="submitQuoteForm(event, 'both', ${currentBudget})">
                     <input type="text" class="qf-input" placeholder="您的姓名" required>
                     <input type="tel" class="qf-input" placeholder="联系电话" required>
