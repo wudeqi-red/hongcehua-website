@@ -108,6 +108,64 @@
         </div>
     </section>
 
+    <!-- ===== 智能报价生成器 ===== -->
+    <section class="quote-section" id="quote">
+        <div class="container">
+            <div class="quote-header">
+                <div class="section-label">智能报价</div>
+                <h2 class="section-title">一键生成<span class="text-red">推广方案</span></h2>
+                <p class="section-sub">选择平台，输入预算，立即获取专业投放方案</p>
+            </div>
+
+            <!-- 平台选择 -->
+            <div class="platform-selector">
+                <div class="platform-tabs">
+                    <button class="platform-tab active" data-platform="xiaohongshu">
+                        <i class="fas fa-book-open"></i>
+                        小红书
+                    </button>
+                    <button class="platform-tab" data-platform="douyin">
+                        <i class="fas fa-video"></i>
+                        抖音
+                    </button>
+                    <button class="platform-tab" data-platform="both">
+                        <i class="fas fa-layer-group"></i>
+                        小红书 + 抖音
+                    </button>
+                </div>
+            </div>
+
+            <!-- 报价内容区域 -->
+            <div class="quote-content">
+                <!-- 预算输入 -->
+                <div class="budget-input-wrapper">
+                    <div class="budget-label">推广预算</div>
+                    <div class="budget-input-row">
+                        <input type="number" id="budgetInput" class="budget-input" value="10000" min="5000" step="1000">
+                        <span class="budget-unit">元</span>
+                    </div>
+                    <div class="budget-presets">
+                        <button class="budget-preset active" data-value="10000">1万</button>
+                        <button class="budget-preset" data-value="50000">5万</button>
+                        <button class="budget-preset" data-value="100000">10万</button>
+                    </div>
+                    <div class="budget-note" id="budgetNote">* 最低预算 5000 元</div>
+                </div>
+
+                <!-- 生成按钮 -->
+                <button class="btn-generate-quote" id="generateBtn">
+                    <i class="fas fa-magic"></i>
+                    立即生成报价方案
+                </button>
+
+                <!-- 报价结果 -->
+                <div class="quote-result" id="quoteResult" style="display:none;">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- ===== 关于我们 ===== -->
     <section class="about-section">
         <div class="container">
@@ -584,5 +642,466 @@
 
     <script src="js/main.js"></script>
     <script src="js/home.js"></script>
+    <script>
+        // ========== 报价配置数据 ==========
+        const QUOTE_CONFIG = {
+            xiaohongshu: {
+                name: '小红书',
+                icon: 'fas fa-book-open',
+                // 基础配置（1w）
+                base: {
+                    budget: 10000,
+                    influencers: [
+                        { type: '头部流量KOL', count: 3, price: 1500, desc: '搭建消费场景，强势打入用户群体' },
+                        { type: '万粉KOC', count: 15, price: 200, desc: '原创图文-种草向' },
+                        { type: '千粉KOC', count: 14, price: 135, desc: '原创图文-种草向' },
+                        { type: '图文直发博主', count: 20, price: 30, desc: '原创图文-种草向' }
+                    ],
+                    dianping: { count: 32, desc: '探店达人同步分发' },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 5w配置
+                mid: {
+                    budget: 50000,
+                    influencers: [
+                        { type: '优质蒲公英博主', count: 10, price: 2000, desc: '以商业流量进入城市市场，打造门店爆文' },
+                        { type: '头部流量KOL', count: 6, price: 2500, desc: '搭建消费场景，扩大品牌声量' },
+                        { type: '万粉KOC', count: 15, price: 333, desc: '原创图文-种草向' },
+                        { type: '千粉KOC', count: 20, price: 0, desc: '原创图文-种草向' }
+                    ],
+                    dianping: { count: 51, desc: '探店达人同步分发' },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 10w配置（5w翻倍）
+                high: {
+                    budget: 100000,
+                    influencers: [
+                        { type: '优质蒲公英博主', count: 20, price: 2000, desc: '以商业流量进入城市市场，打造门店爆文' },
+                        { type: '头部流量KOL', count: 12, price: 2500, desc: '搭建消费场景，扩大品牌声量' },
+                        { type: '万粉KOC', count: 30, price: 333, desc: '原创图文-种草向' },
+                        { type: '千粉KOC', count: 40, price: 0, desc: '原创图文-种草向' }
+                    ],
+                    dianping: { count: 102, desc: '探店达人同步分发' },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                }
+            },
+            douyin: {
+                name: '抖音',
+                icon: 'fas fa-video',
+                // 1w配置
+                base: {
+                    budget: 10000,
+                    influencers: [
+                        { type: '优质品宣博主', count: 2, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
+                        { type: 'LV6', count: 5, price: 400, desc: '原创视频-转化向' },
+                        { type: 'LV5', count: 10, price: 200, desc: '原创视频-转化向' },
+                        { type: 'LV3', count: 10, price: 80, desc: '原创视频-转化向' }
+                    ],
+                    adBudget: 2000,
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 5w配置（1w翻5倍）
+                mid: {
+                    budget: 50000,
+                    influencers: [
+                        { type: '优质品宣博主', count: 10, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
+                        { type: 'LV6', count: 25, price: 400, desc: '原创视频-转化向' },
+                        { type: 'LV5', count: 50, price: 200, desc: '原创视频-转化向' },
+                        { type: 'LV3', count: 50, price: 80, desc: '原创视频-转化向' }
+                    ],
+                    adBudget: 10000,
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 10w配置（5w翻倍）
+                high: {
+                    budget: 100000,
+                    influencers: [
+                        { type: '优质品宣博主', count: 20, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
+                        { type: 'LV6', count: 50, price: 400, desc: '原创视频-转化向' },
+                        { type: 'LV5', count: 100, price: 200, desc: '原创视频-转化向' },
+                        { type: 'LV3', count: 100, price: 80, desc: '原创视频-转化向' }
+                    ],
+                    adBudget: 20000,
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                }
+            },
+            both: {
+                name: '小红书 + 抖音',
+                icon: 'fas fa-layer-group',
+                // 1w：小红书1w + 抖音1w
+                base: {
+                    budget: 10000,
+                    xiaohongshu: {
+                        budget: 5000,
+                        influencers: [
+                            { type: '头部流量KOL', count: 2, price: 1500, desc: '搭建消费场景，强势打入用户群体' },
+                            { type: '万粉KOC', count: 8, price: 200, desc: '原创图文-种草向' },
+                            { type: '千粉KOC', count: 7, price: 135, desc: '原创图文-种草向' }
+                        ],
+                        dianping: { count: 16, desc: '探店达人同步分发' }
+                    },
+                    douyin: {
+                        budget: 5000,
+                        influencers: [
+                            { type: '优质品宣博主', count: 1, price: 1600, desc: '扩散用户对品牌的认知度' },
+                            { type: 'LV6', count: 3, price: 400, desc: '原创视频-转化向' },
+                            { type: 'LV5', count: 5, price: 200, desc: '原创视频-转化向' }
+                        ],
+                        adBudget: 1000
+                    },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 5w：小红书2.5w + 抖音2.5w
+                mid: {
+                    budget: 50000,
+                    xiaohongshu: {
+                        budget: 25000,
+                        influencers: [
+                            { type: '优质蒲公英博主', count: 5, price: 2000, desc: '以商业流量进入城市市场' },
+                            { type: '头部流量KOL', count: 3, price: 2500, desc: '搭建消费场景' },
+                            { type: '万粉KOC', count: 8, price: 333, desc: '原创图文-种草向' },
+                            { type: '千粉KOC', count: 10, price: 0, desc: '原创图文-种草向' }
+                        ],
+                        dianping: { count: 26, desc: '探店达人同步分发' }
+                    },
+                    douyin: {
+                        budget: 25000,
+                        influencers: [
+                            { type: '优质品宣博主', count: 5, price: 1600, desc: '扩散用户对品牌的认知度' },
+                            { type: 'LV6', count: 13, price: 400, desc: '原创视频-转化向' },
+                            { type: 'LV5', count: 25, price: 200, desc: '原创视频-转化向' },
+                            { type: 'LV3', count: 25, price: 80, desc: '原创视频-转化向' }
+                        ],
+                        adBudget: 5000
+                    },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                },
+                // 10w：小红书5w + 抖音5w
+                high: {
+                    budget: 100000,
+                    xiaohongshu: {
+                        budget: 50000,
+                        influencers: [
+                            { type: '优质蒲公英博主', count: 10, price: 2000, desc: '以商业流量进入城市市场' },
+                            { type: '头部流量KOL', count: 6, price: 2500, desc: '搭建消费场景' },
+                            { type: '万粉KOC', count: 15, price: 333, desc: '原创图文-种草向' },
+                            { type: '千粉KOC', count: 20, price: 0, desc: '原创图文-种草向' }
+                        ],
+                        dianping: { count: 51, desc: '探店达人同步分发' }
+                    },
+                    douyin: {
+                        budget: 50000,
+                        influencers: [
+                            { type: '优质品宣博主', count: 10, price: 1600, desc: '扩散用户对品牌的认知度' },
+                            { type: 'LV6', count: 25, price: 400, desc: '原创视频-转化向' },
+                            { type: 'LV5', count: 50, price: 200, desc: '原创视频-转化向' },
+                            { type: 'LV3', count: 50, price: 80, desc: '原创视频-转化向' }
+                        ],
+                        adBudget: 10000
+                    },
+                    services: ['策略拉起', '媒介执行', '整合复盘']
+                }
+            }
+        };
+
+        // ========== 平台和预算选择逻辑 ==========
+        let currentPlatform = 'xiaohongshu';
+        let currentBudget = 10000;
+
+        // 平台切换
+        document.querySelectorAll('.platform-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentPlatform = tab.dataset.platform;
+            });
+        });
+
+        // 预算预设切换
+        document.querySelectorAll('.budget-preset').forEach(preset => {
+            preset.addEventListener('click', () => {
+                document.querySelectorAll('.budget-preset').forEach(p => p.classList.remove('active'));
+                preset.classList.add('active');
+                currentBudget = parseInt(preset.dataset.value);
+                document.getElementById('budgetInput').value = currentBudget;
+                document.getElementById('quoteResult').style.display = 'none';
+            });
+        });
+
+        // 预算输入
+        document.getElementById('budgetInput').addEventListener('input', (e) => {
+            currentBudget = parseInt(e.target.value);
+            if (currentBudget < 5000) {
+                document.getElementById('budgetNote').style.display = 'block';
+                document.getElementById('budgetNote').style.color = '#ff4757';
+            } else {
+                document.getElementById('budgetNote').style.display = 'none';
+                // 取消预设激活
+                document.querySelectorAll('.budget-preset').forEach(p => p.classList.remove('active'));
+            }
+        });
+
+        // ========== 生成报价方案 ==========
+        document.getElementById('generateBtn').addEventListener('click', generateQuote);
+
+        function generateQuote() {
+            if (currentBudget < 5000) {
+                alert('最低预算为 5000 元');
+                return;
+            }
+
+            let config;
+            let quoteHtml = '';
+
+            // 根据预算选择配置档次
+            if (currentBudget < 30000) {
+                config = QUOTE_CONFIG[currentPlatform].base;
+            } else if (currentBudget < 80000) {
+                config = QUOTE_CONFIG[currentPlatform].mid;
+            } else {
+                config = QUOTE_CONFIG[currentPlatform].high;
+            }
+
+            // 计算比例因子
+            let factor = currentBudget / config.budget;
+            let totalInfluencers = 0;
+            let totalBudget = 0;
+
+            // 生成报价HTML
+            if (currentPlatform === 'both') {
+                // 双平台
+                quoteHtml = generateBothPlatformQuote(config, factor);
+            } else {
+                // 单平台
+                quoteHtml = generateSinglePlatformQuote(currentPlatform, config, factor);
+            }
+
+            // 显示结果
+            document.getElementById('quoteResult').innerHTML = quoteHtml;
+            document.getElementById('quoteResult').style.display = 'block';
+
+            // 滚动到结果区域
+            document.getElementById('quoteResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function generateSinglePlatformQuote(platform, config, factor) {
+            let html = '';
+            let totalInfluencers = 0;
+            let influencerCost = 0;
+
+            html += `<div class="quote-header-row">
+                <h3><i class="${QUOTE_CONFIG[platform].icon}"></i> ${QUOTE_CONFIG[platform].name}推广方案</h3>
+                <div class="quote-budget">预算：¥${currentBudget.toLocaleString()}</div>
+            </div>`;
+
+            // 达人矩阵
+            html += `<div class="quote-section">
+                <h4>📱 达人矩阵</h4>
+                <div class="influencer-list">`;
+
+            config.influencers.forEach(item => {
+                let count = Math.round(item.count * factor);
+                if (count < 1 && item.count > 0) count = 1;
+                let cost = count * item.price;
+                influencerCost += cost;
+                totalInfluencers += count;
+
+                html += `<div class="influencer-item">
+                    <div class="ii-type">${item.type}</div>
+                    <div class="ii-details">
+                        <div class="ii-count">${count}人</div>
+                        <div class="ii-desc">${item.desc}</div>
+                    </div>
+                    <div class="ii-price">${cost > 0 ? '¥' + cost.toLocaleString() : '赠送'}</div>
+                </div>`;
+            });
+
+            html += `</div></div>`;
+
+            // 点评笔记（小红书）
+            if (config.dianping) {
+                let dianpingCount = Math.round(config.dianping.count * factor);
+                html += `<div class="quote-section">
+                    <h4>📝 大众点评笔记</h4>
+                    <div class="dianping-item">
+                        <div class="di-count">${dianpingCount}篇</div>
+                        <div class="di-desc">${config.dianping.desc}</div>
+                        <div class="di-price">赠送</div>
+                    </div>
+                </div>`;
+            }
+
+            // 投流（抖音）
+            if (config.adBudget) {
+                let adBudget = Math.round(config.adBudget * factor);
+                html += `<div class="quote-section">
+                    <h4>💰 平台投流</h4>
+                    <div class="ad-item">
+                        <div class="ad-type">本地推投流</div>
+                        <div class="ad-desc">官方投流，促转化</div>
+                        <div class="ad-price">¥${adBudget.toLocaleString()}</div>
+                    </div>
+                </div>`;
+            }
+
+            // 增值服务
+            html += `<div class="quote-section">
+                <h4>🎁 增值服务（免费）</h4>
+                <div class="service-tags">`;
+            config.services.forEach(service => {
+                html += `<span class="service-tag">${service}</span>`;
+            });
+            html += `</div></div>`;
+
+            // 留资表单
+            html += `<div class="quote-contact">
+                <h4>💬 获取完整方案</h4>
+                <p>填写联系方式，专业顾问24小时内联系您</p>
+                <form class="quote-form" onsubmit="submitQuoteForm(event, '${platform}', ${currentBudget})">
+                    <input type="text" class="qf-input" placeholder="您的姓名" required>
+                    <input type="tel" class="qf-input" placeholder="联系电话" required>
+                    <input type="text" class="qf-input" placeholder="品牌/公司名称">
+                    <button type="submit" class="btn-submit-quote">提交申请</button>
+                </form>
+            </div>`;
+
+            return html;
+        }
+
+        function generateBothPlatformQuote(config, factor) {
+            let html = '';
+            // 双平台1w预算特殊处理：按5000+5000分配，不使用factor
+            let xhsFactor, dyFactor, xhsDisplayBudget, dyDisplayBudget;
+
+            if (currentBudget === 10000) {
+                // 1w预算：各5000
+                xhsFactor = 0.5;
+                dyFactor = 0.5;
+                xhsDisplayBudget = 5000;
+                dyDisplayBudget = 5000;
+            } else {
+                // 5w/10w等：按5:5分配
+                xhsFactor = factor;
+                dyFactor = factor;
+                xhsDisplayBudget = Math.round(currentBudget / 2);
+                dyDisplayBudget = Math.round(currentBudget / 2);
+            }
+
+            html += `<div class="quote-header-row">
+                <h3><i class="${QUOTE_CONFIG.both.icon}"></i> ${QUOTE_CONFIG.both.name}整合方案</h3>
+                <div class="quote-budget">预算：¥${currentBudget.toLocaleString()}</div>
+            </div>`;
+
+            // 小红书部分
+            html += `<div class="platform-split xiaohongshu">
+                <h4>📕 小红书部分（¥${xhsDisplayBudget.toLocaleString()}）</h4>
+                <div class="influencer-list">`;
+
+            config.xiaohongshu.influencers.forEach(item => {
+                let count = Math.round(item.count * xhsFactor);
+                if (count < 1 && item.count > 0) count = 1;
+                html += `<div class="influencer-item">
+                    <div class="ii-type">${item.type}</div>
+                    <div class="ii-details">
+                        <div class="ii-count">${count}人</div>
+                        <div class="ii-desc">${item.desc}</div>
+                    </div>
+                    <div class="ii-price">达人投放</div>
+                </div>`;
+            });
+
+            let dianpingCount = Math.round(config.xiaohongshu.dianping.count * xhsFactor);
+            html += `<div class="influencer-item">
+                <div class="ii-type">点评笔记</div>
+                <div class="ii-details">
+                    <div class="ii-count">${dianpingCount}篇</div>
+                    <div class="ii-desc">${config.xiaohongshu.dianping.desc}</div>
+                </div>
+                <div class="ii-price">赠送</div>
+            </div>`;
+
+            html += `</div></div>`;
+
+            // 抖音部分
+            html += `<div class="platform-split douyin">
+                <h4>🎵 抖音部分（¥${dyDisplayBudget.toLocaleString()}）</h4>
+                <div class="influencer-list">`;
+
+            config.douyin.influencers.forEach(item => {
+                let count = Math.round(item.count * dyFactor);
+                if (count < 1 && item.count > 0) count = 1;
+                html += `<div class="influencer-item">
+                    <div class="ii-type">${item.type}</div>
+                    <div class="ii-details">
+                        <div class="ii-count">${count}人</div>
+                        <div class="ii-desc">${item.desc}</div>
+                    </div>
+                    <div class="ii-price">达人投放</div>
+                </div>`;
+            });
+
+            let adBudget = Math.round(config.douyin.adBudget * dyFactor);
+            html += `<div class="influencer-item">
+                <div class="ii-type">本地推投流</div>
+                <div class="ii-details">
+                    <div class="ii-count">-</div>
+                    <div class="ii-desc">官方投流，促转化</div>
+                </div>
+                <div class="ii-price">¥${adBudget.toLocaleString()}</div>
+            </div>`;
+
+            html += `</div></div>`;
+
+            // 增值服务
+            html += `<div class="quote-section">
+                <h4>🎁 增值服务（免费）</h4>
+                <div class="service-tags">`;
+            config.services.forEach(service => {
+                html += `<span class="service-tag">${service}</span>`;
+            });
+            html += `</div></div>`;
+
+            // 留资表单
+            html += `<div class="quote-contact">
+                <h4>💬 获取完整方案</h4>
+                <p>填写联系方式，专业顾问24小时内联系您</p>
+                <form class="quote-form" onsubmit="submitQuoteForm(event, 'both', ${currentBudget})">
+                    <input type="text" class="qf-input" placeholder="您的姓名" required>
+                    <input type="tel" class="qf-input" placeholder="联系电话" required>
+                    <input type="text" class="qf-input" placeholder="品牌/公司名称">
+                    <button type="submit" class="btn-submit-quote">提交申请</button>
+                </form>
+            </div>`;
+
+            return html;
+        }
+
+        // ========== 提交询盘 ==========
+        async function submitQuoteForm(event, platform, budget) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const data = {
+                name: form.querySelector('input:nth-of-type(1)').value,
+                phone: form.querySelector('input:nth-of-type(2)').value,
+                company: form.querySelector('input:nth-of-type(3)').value,
+                platform: platform,
+                budget: budget,
+                createTime: new Date().toISOString(),
+                status: 'new'
+            };
+
+            try {
+                const db = await window.app.database();
+                await db.collection('hc_inquiries').add(data);
+                alert('提交成功！我们的顾问会在24小时内联系您。');
+                form.reset();
+            } catch (error) {
+                console.error('提交失败:', error);
+                alert('提交失败，请稍后重试或直接联系我们：18860923047');
+            }
+        }
+    </script>
 </body>
 </html>
