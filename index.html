@@ -695,7 +695,7 @@
                         { type: '优质品宣博主', count: 2, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
                         { type: 'LV6', count: 5, price: 400, desc: '原创视频-转化向' },
                         { type: 'LV5', count: 10, price: 200, desc: '原创视频-转化向' },
-                        { type: 'LV3', count: 10, price: 80, desc: '原创视频-转化向' }
+                        { type: 'LV4', count: 10, price: 80, desc: '原创视频-转化向' }
                     ],
                     adBudget: 2000,
                     services: ['策略拉起', '媒介执行', '整合复盘']
@@ -707,7 +707,7 @@
                         { type: '优质品宣博主', count: 10, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
                         { type: 'LV6', count: 25, price: 400, desc: '原创视频-转化向' },
                         { type: 'LV5', count: 50, price: 200, desc: '原创视频-转化向' },
-                        { type: 'LV3', count: 50, price: 80, desc: '原创视频-转化向' }
+                        { type: 'LV4', count: 50, price: 80, desc: '原创视频-转化向' }
                     ],
                     adBudget: 10000,
                     services: ['策略拉起', '媒介执行', '整合复盘']
@@ -719,7 +719,7 @@
                         { type: '优质品宣博主', count: 20, price: 1600, desc: '扩散用户对品牌的认知度，强势打入用户群体' },
                         { type: 'LV6', count: 50, price: 400, desc: '原创视频-转化向' },
                         { type: 'LV5', count: 100, price: 200, desc: '原创视频-转化向' },
-                        { type: 'LV3', count: 100, price: 80, desc: '原创视频-转化向' }
+                        { type: 'LV4', count: 100, price: 80, desc: '原创视频-转化向' }
                     ],
                     adBudget: 20000,
                     services: ['策略拉起', '媒介执行', '整合复盘']
@@ -744,8 +744,9 @@
                         budget: 5000,
                         influencers: [
                             { type: '优质品宣博主', count: 1, price: 1600, desc: '扩散用户对品牌的认知度' },
-                            { type: 'LV6', count: 3, price: 400, desc: '原创视频-转化向' },
-                            { type: 'LV5', count: 5, price: 200, desc: '原创视频-转化向' }
+                            { type: 'LV6', count: 2, price: 400, desc: '原创视频-转化向' },
+                            { type: 'LV5', count: 5, price: 200, desc: '原创视频-转化向' },
+                            { type: 'LV4', count: 5, price: 80, desc: '原创视频-转化向' }
                         ],
                         adBudget: 1000
                     },
@@ -768,9 +769,9 @@
                         budget: 25000,
                         influencers: [
                             { type: '优质品宣博主', count: 5, price: 1600, desc: '扩散用户对品牌的认知度' },
-                            { type: 'LV6', count: 13, price: 400, desc: '原创视频-转化向' },
+                            { type: 'LV6', count: 12, price: 400, desc: '原创视频-转化向' },
                             { type: 'LV5', count: 25, price: 200, desc: '原创视频-转化向' },
-                            { type: 'LV3', count: 25, price: 80, desc: '原创视频-转化向' }
+                            { type: 'LV4', count: 25, price: 80, desc: '原创视频-转化向' }
                         ],
                         adBudget: 5000
                     },
@@ -795,7 +796,7 @@
                             { type: '优质品宣博主', count: 10, price: 1600, desc: '扩散用户对品牌的认知度' },
                             { type: 'LV6', count: 25, price: 400, desc: '原创视频-转化向' },
                             { type: 'LV5', count: 50, price: 200, desc: '原创视频-转化向' },
-                            { type: 'LV3', count: 50, price: 80, desc: '原创视频-转化向' }
+                            { type: 'LV4', count: 50, price: 80, desc: '原创视频-转化向' }
                         ],
                         adBudget: 10000
                     },
@@ -888,6 +889,7 @@
             let html = '';
             let totalInfluencers = 0;
             let influencerCost = 0;
+            const platformClass = platform;
 
             html += `<div class="quote-header-row">
                 <h3><i class="${QUOTE_CONFIG[platform].icon}"></i> ${QUOTE_CONFIG[platform].name}推广方案</h3>
@@ -895,7 +897,7 @@
             </div>`;
 
             // 达人矩阵
-            html += `<div class="quote-section">
+            html += `<div class="platform-split ${platformClass}">
                 <h4>📱 达人矩阵</h4>
                 <div class="influencer-list">`;
 
@@ -920,7 +922,7 @@
             // 投流（抖音）
             if (config.adBudget) {
                 let adBudget = Math.round(config.adBudget * factor);
-                html += `<div class="quote-section">
+                html += `<div class="platform-split ${platformClass}">
                     <h4>💰 平台投流</h4>
                     <div class="ad-item">
                         <div class="ad-type">本地推投流</div>

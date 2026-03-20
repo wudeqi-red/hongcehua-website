@@ -1849,7 +1849,7 @@
     text-align: right;
 }
 
-/* 平台分割（双平台） */
+/* 平台分割（单平台和双平台） */
 .platform-split {
     padding: 20px;
     border-radius: 12px;
