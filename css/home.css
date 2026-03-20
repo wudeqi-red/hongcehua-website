@@ -1767,7 +1767,7 @@
 
 .influencer-item {
     display: grid;
-    grid-template-columns: 1.5fr 2fr 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: 16px;
     padding: 12px 16px;
     background: #fff5f5;
@@ -1804,51 +1804,31 @@
     color: var(--text-light);
 }
 
-.ii-price {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-light);
-    text-align: right;
-}
-
-/* 点评笔记 */
-.dianping-item {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 16px;
-    padding: 12px 16px;
-    background: #fff4e6;
-    border-radius: 10px;
-    align-items: center;
-}
-
-.di-count {
-    font-size: 20px;
-    font-weight: 800;
-    color: #ff9800;
-}
-
-.di-desc {
-    font-size: 14px;
-    color: var(--text-mid);
-}
-
-.di-price {
-    font-size: 16px;
-    font-weight: 700;
-    color: #4caf50;
-    text-align: right;
-}
-
 /* 投流 */
 .ad-item {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 16px;
     padding: 12px 16px;
     background: #e8f5e9;
     border-radius: 10px;
-    align-items: center;
+}
+
+.ad-type {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 6px;
+}
+
+.ad-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+}
+
+.ad-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #4caf50;
+    text-align: right;
 }
 
 .ad-type {
@@ -1867,22 +1847,6 @@
     font-weight: 800;
     color: #4caf50;
     text-align: right;
-}
-
-/* 增值服务 */
-.service-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.service-tag {
-    padding: 6px 14px;
-    background: linear-gradient(135deg, #ff6b6b 0%, #e84d1c 100%);
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 20px;
 }
 
 /* 平台分割（双平台） */

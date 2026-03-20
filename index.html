@@ -912,24 +912,10 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
 
             html += `</div></div>`;
-
-            // 点评笔记（小红书）
-            if (config.dianping) {
-                let dianpingCount = Math.round(config.dianping.count * factor);
-                html += `<div class="quote-section">
-                    <h4>📝 大众点评笔记</h4>
-                    <div class="dianping-item">
-                        <div class="di-count">${dianpingCount}篇</div>
-                        <div class="di-desc">${config.dianping.desc}</div>
-                        <div class="di-price">赠送</div>
-                    </div>
-                </div>`;
-            }
 
             // 投流（抖音）
             if (config.adBudget) {
@@ -943,15 +929,6 @@
                     </div>
                 </div>`;
             }
-
-            // 增值服务
-            html += `<div class="quote-section">
-                <h4>🎁 增值服务（免费）</h4>
-                <div class="service-tags">`;
-            config.services.forEach(service => {
-                html += `<span class="service-tag">${service}</span>`;
-            });
-            html += `</div></div>`;
 
             // 留资表单
             html += `<div class="quote-contact">
@@ -1007,19 +984,8 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
-
-            let dianpingCount = Math.round(config.xiaohongshu.dianping.count * xhsFactor);
-            html += `<div class="influencer-item">
-                <div class="ii-type">点评笔记</div>
-                <div class="ii-details">
-                    <div class="ii-count">${dianpingCount}篇</div>
-                    <div class="ii-desc">${config.xiaohongshu.dianping.desc}</div>
-                </div>
-                <div class="ii-price">赠送</div>
-            </div>`;
 
             html += `</div></div>`;
 
@@ -1037,7 +1003,6 @@
                         <div class="ii-count">${count}人</div>
                         <div class="ii-desc">${item.desc}</div>
                     </div>
-                    <div class="ii-price">${item.price > 0 ? '¥' + item.price + '/人' : '赠送'}</div>
                 </div>`;
             });
 
@@ -1051,15 +1016,6 @@
                 <div class="ii-price">¥${adBudget.toLocaleString()}</div>
             </div>`;
 
-            html += `</div></div>`;
-
-            // 增值服务
-            html += `<div class="quote-section">
-                <h4>🎁 增值服务（免费）</h4>
-                <div class="service-tags">`;
-            config.services.forEach(service => {
-                html += `<span class="service-tag">${service}</span>`;
-            });
             html += `</div></div>`;
 
             // 留资表单
